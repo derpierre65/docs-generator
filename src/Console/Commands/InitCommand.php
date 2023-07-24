@@ -13,8 +13,6 @@ class InitCommand extends Command
 
 	public $description = 'Initialize the src-docs directory for your project.';
 
-	public $npmPackage = 'github:derpierre65/docs-generator-npm';
-
 	protected bool $srcDocsPresent = false;
 
 	protected string $srcDocsDirectory;

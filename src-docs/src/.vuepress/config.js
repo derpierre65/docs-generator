@@ -5,9 +5,10 @@ import autoprefixer from 'autoprefixer';
 import path from 'path';
 import tailwindcss from 'tailwindcss';
 import {defineUserConfig} from 'vuepress';
+import docsGenerator from './docs/plugin';
 import init from './docs/init';
 
-init();
+const docsGeneratorPluginOptions = init();
 
 export default defineUserConfig({
 	lang: 'en-US',
@@ -39,6 +40,7 @@ export default defineUserConfig({
 		registerComponentsPlugin({
 			componentsDir: path.resolve(__dirname, './components'),
 		}),
+		docsGenerator(docsGeneratorPluginOptions),
 	],
 	bundlerConfig: {
 		viteOptions: {
