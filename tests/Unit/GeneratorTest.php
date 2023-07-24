@@ -1,24 +1,19 @@
 <?php
-declare(strict_types=1);
 
 namespace Derpierre65\DocsGenerator\Tests\Unit;
 
-use Derpierre65\DocsGenerator\DocsGenerator;
+use Derpierre65\DocsGenerator\Tests\CreateGenerator;
 use PHPUnit\Framework\TestCase;
 
 class GeneratorTest extends TestCase
 {
-	public function testGenerator()
-	{
-		$this->assertTrue(true);
+	use CreateGenerator;
 
-		/*$generator = new DocsGenerator(
-			$_SERVER['DOCUMENT_ROOT'].'example/Controllers',
-			$_SERVER['DOCUMENT_ROOT'].'example/Resources',
-			'Derpierre65\DocsGenerator\Example\Controllers',
-			'Derpierre65\DocsGenerator\Example\Resources'
-		);
+	public function testEmptyValues() {
+		$generator = $this->initializeGenerator('ApiVersion1');
 
-		dd($generator->fetchEndpoints());*/
+		$this->assertEmpty($generator->getEndpoints());
+		$this->assertEmpty($generator->getApiVersions());
+		$this->assertEmpty($generator->getSchemes());
 	}
 }

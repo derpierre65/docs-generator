@@ -10,7 +10,7 @@
     ],
     "bin": ["src/docs.php"],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "symfony/finder": "^6.2",
         "splitbrain/php-cli": "^1.2"
     },
@@ -21,7 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Derpierre65\\DocsGenerator\\Example\\": "example/",
+            "Derpierre65\\DocsGenerator\\Example\\": "example/src/",
             "Derpierre65\\DocsGenerator\\Tests\\": "tests/"
         }
     },

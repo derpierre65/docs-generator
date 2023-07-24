@@ -104,7 +104,6 @@ class InitCommand extends Command
 		foreach ( $files as $file ) {
 			$targetFile = str_replace(['//', '\\'], '/', $this->srcDocsDirectory.'/'.$baseDir.$file->getRelativePathname());
 			$targetDirectory = dirname($targetFile);
-			dump([$targetFile, $targetDirectory, $file]);
 
 			if ( !file_exists($targetDirectory) ) {
 				$this->cli->info('Creating {directory}...', ['directory' => $targetDirectory]);
