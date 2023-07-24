@@ -1,11 +1,4 @@
-node_modules/
 vendor/
 .idea/
 
-composer.lock
 .phpunit.result.cache
-
-src-node/src/.vuepress/.cache
-src-node/src/.vuepress/.temp
-src-node/src/.vuepress/dist
-src-node/package-lock.json

@@ -8,9 +8,11 @@
             "email": "git@derpierre65.de"
         }
     ],
+    "bin": ["src/docs.php"],
     "require": {
         "php": "^8.0",
-        "symfony/finder": "^6.2"
+        "symfony/finder": "^6.2",
+        "splitbrain/php-cli": "^1.2"
     },
     "autoload": {
         "psr-4": {
