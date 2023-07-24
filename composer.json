@@ -1,0 +1,34 @@
+{
+    "name": "derpierre65/docs-generator",
+    "version": "0.1.0",
+    "description": "",
+    "authors": [
+        {
+            "name": "derpierre65",
+            "email": "git@derpierre65.de"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "symfony/finder": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Derpierre65\\DocsGenerator\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Derpierre65\\DocsGenerator\\Example\\": "example/",
+            "Derpierre65\\DocsGenerator\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "fix": "vendor/bin/php-cs-fixer fix"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.2",
+        "symfony/var-dumper": "^6.3"
+    }
+}
