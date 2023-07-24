@@ -1,0 +1,23 @@
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--sidebar-width: 16rem;
+}
+
+.search-box input {
+	--search-input-width: 12rem;
+}
+
+.page-layout-test {
+	--content-width: 100%;
+	//padding: 0 !important;
+}
+
+.badge.notice {
+	@apply bg-blue-400
+}
+
+.hallo + table > tbody > tr > td:first-child {
+	white-space: nowrap;
+}
