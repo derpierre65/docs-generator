@@ -11,6 +11,7 @@ use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\Attributes\Summary;
 use Derpierre65\DocsGenerator\Helpers\RequireScope;
 use ReflectionClass;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class DocsGenerator
@@ -19,35 +20,22 @@ class DocsGenerator
 
 	protected array $endpoints = [];
 
+	/** @var ApiVersion[] */
 	protected array $apiVersions = [];
 
 	protected array $schemes = [];
 
-	public function __construct(string $directory, string $namespace, protected string $docsDirectory)
+	public function __construct(string $directory, string $namespace, public readonly string $docsDirectory)
 	{
 		$this->directories = [
 			$this->normalizeDir($directory) => $namespace,
 		];
 	}
 
-	public function saveApiVersionJson()
-	{
-		dd(array_keys($this->getEndpoints()));
-	}
-
-	public function generate()
-	{
-		if ( empty($this->endpoints) ) {
-			return;
-		}
-
-		dd('TODO generate documentation files');
-	}
-
 	public function fetch() : static
 	{
 		$files = $this->getFiles($directories = array_keys($this->directories));
-		$files = array_map(function (\SplFileInfo $fileInfo) use ($directories) : ?string {
+		$files = array_map(function (SplFileInfo $fileInfo) use ($directories) : ?string {
 			foreach ( $directories as $directory ) {
 				if ( str_starts_with($this->normalizeDir($fileInfo->getPathname()), $directory) ) {
 					return $this->directories[$directory].str_replace('/', '\\', substr(
@@ -157,6 +145,30 @@ class DocsGenerator
 		return $this;
 	}
 
+	public function saveApiVersionJson() : void
+	{
+		$jsonContent = json_encode(array_map(fn(ApiVersion $version) => $version->toArray(), $this->getApiVersions()), JSON_PRETTY_PRINT);
+		if ( !file_exists($this->docsDirectory) ) {
+			$this->log('error', 'src-docs directory doesn\'t exist.');
+
+			return;
+		}
+
+		if ( !file_exists($dirname = dirname($jsonFile = $this->getApiJsonDirectory())) ) {
+			mkdir($dirname, recursive: true);
+		}
+		file_put_contents($jsonFile, $jsonContent);
+	}
+
+	public function generate() : void
+	{
+		if ( empty($this->endpoints) ) {
+			return;
+		}
+
+		dd('TODO generate documentation files');
+	}
+
 	protected function fetchAttributes(array $attributes, bool $asArray = false) : array
 	{
 		$group = [];
@@ -197,6 +209,11 @@ class DocsGenerator
 	}
 
 	//<editor-fold desc="getters">
+	public function getApiJsonDirectory() : string
+	{
+		return $this->docsDirectory.'/src/.vuepress/api.json';
+	}
+
 	public function getEndpoints() : array
 	{
 		return $this->endpoints;

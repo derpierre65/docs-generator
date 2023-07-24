@@ -11,6 +11,16 @@ class ApiVersion
 	{
 	}
 
+	public function toArray() : array
+	{
+		return [
+			'version' => $this->version,
+			'prefix' => $this->prefix,
+			'internalName' => $this->internalName,
+			'url' => $this->url,
+		];
+	}
+
 	public function getApiURL() : string
 	{
 		return (str_ends_with($this->url, '/') ? $this->url : $this->url.'/').$this->prefix.'/';

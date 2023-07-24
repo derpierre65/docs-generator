@@ -5,6 +5,7 @@
 require_once $GLOBALS['_composer_autoload_path'] ?? __DIR__.'/../vendor/autoload.php';
 
 use Derpierre65\DocsGenerator\Console\Command;
+use Derpierre65\DocsGenerator\Console\Commands\GenerateCommand;
 use Derpierre65\DocsGenerator\Console\Commands\InitCommand;
 use splitbrain\phpcli\CLI;
 use splitbrain\phpcli\Options;
@@ -17,6 +18,7 @@ class Minimal extends CLI
 	{
 		$this->registerCommands($options, [
 			InitCommand::class,
+			GenerateCommand::class,
 		]);
 
 		$options->registerOption('version', 'print version', 'v');

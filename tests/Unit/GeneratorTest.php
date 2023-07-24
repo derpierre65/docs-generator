@@ -9,11 +9,19 @@ class GeneratorTest extends TestCase
 {
 	use CreateGenerator;
 
-	public function testEmptyValues() {
+	public function testEmptyValues()
+	{
 		$generator = $this->initializeGenerator('ApiVersion1');
 
 		$this->assertEmpty($generator->getEndpoints());
 		$this->assertEmpty($generator->getApiVersions());
 		$this->assertEmpty($generator->getSchemes());
+	}
+
+	public function testDemo()
+	{
+		$generator = $this->initializeGenerator('ApiVersion1');
+
+		$generator->fetch()->saveApiVersionJson();
 	}
 }

@@ -27,7 +27,8 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "fix": "vendor/bin/php-cs-fixer fix"
+        "fix": "vendor/bin/php-cs-fixer fix",
+        "generate": "php src/docs.php generate example/docs-generator.php"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.2",
