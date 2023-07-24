@@ -17,7 +17,7 @@ export default {
 	name: 'Endpoint',
 	expose: ['renderLayout'],
 	mounted() {
-		document.querySelector('main.page').classList.add('page-layout-test');
+		document.querySelector('main.page')?.classList.add('page-layout-test');
 
 		const heading = this.$el.querySelector('h1, h2, h3, h4, h5, h6');
 		if (heading) {

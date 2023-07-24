@@ -5,6 +5,9 @@ import autoprefixer from 'autoprefixer';
 import path from 'path';
 import tailwindcss from 'tailwindcss';
 import {defineUserConfig} from 'vuepress';
+import init from './docs/init';
+
+init();
 
 export default defineUserConfig({
 	lang: 'en-US',

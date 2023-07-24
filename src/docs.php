@@ -2,7 +2,7 @@
 <?php
 
 // register auto loader
-require_once $GLOBALS['_composer_autoload_path'];
+require_once $GLOBALS['_composer_autoload_path'] ?? __DIR__.'/../vendor/autoload.php';
 
 use Derpierre65\DocsGenerator\Console\Command;
 use Derpierre65\DocsGenerator\Console\Commands\InitCommand;
@@ -29,14 +29,16 @@ class Minimal extends CLI
 			$instance = new $class();
 			$this->commands[$instance->signature] = $instance;
 			$options->registerCommand($instance->signature, $instance->description);
+			$instance->registerArguments($options);
 		}
 	}
 
 	protected function main(Options $options) : void
 	{
 		if ( isset($this->commands[$options->getCmd()]) ) {
+			/** @var Command $command */
 			$command = $this->commands[$options->getCmd()];
-			$command->prepare($this);
+			$command->prepare($this, $options);
 			$command->handle();
 		}
 		elseif ( $options->getOpt('version') ) {

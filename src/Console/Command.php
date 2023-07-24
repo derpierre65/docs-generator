@@ -3,6 +3,7 @@
 namespace Derpierre65\DocsGenerator\Console;
 
 use splitbrain\phpcli\CLI;
+use splitbrain\phpcli\Options;
 
 abstract class Command
 {
@@ -17,10 +18,15 @@ abstract class Command
 
 	protected ?CLI $cli = null;
 
+	protected ?Options $options;
+
 	abstract function handle(): int;
 
-	public function prepare(CLI $cli) : void
+	public function prepare(CLI $cli, Options $options) : void
 	{
 		$this->cli = $cli;
+		$this->options = $options;
 	}
+
+	public function registerArguments(Options $options) {}
 }
