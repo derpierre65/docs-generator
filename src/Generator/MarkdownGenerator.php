@@ -42,14 +42,14 @@ class MarkdownGenerator
 			}
 
 			$html[$resource->name] .= $this->replaceTemplateVariables($entryTemplate, [
-				'endpoint_title' => $endpoint->getSummary()->title,
-				'endpoint_summary' => $endpoint->getSummary()->summary,
+				'endpoint_title' => $summary->title,
+				'endpoint_summary' => $summary->summary,
 				'endpoint_method' => $endpoint->method->value,
 				'endpoint_url' => $endpoint->getPath(),
 				'endpoint_authorization' => '', // TODO oauth authorization information
 				'query_parameters' => '', // TODO
 				'body_parameters' => '', // TODO
-				'response_body' => $this->getTable($responseIndexTemplate, $responseEntryTemplate, $endpoint->getProperties()), // TODO
+				'response_body' => $this->getTable($responseIndexTemplate, $responseEntryTemplate, $endpoint->getProperties()),
 				'response_codes' => '', // TODO
 			]);
 		}
@@ -67,7 +67,6 @@ class MarkdownGenerator
 
 	protected function getTable(string $header, string $entry, array $properties, $level = 0)
 	{
-		dump($properties);
 		if ( empty($properties) ) {
 			return '';
 		}
@@ -77,9 +76,20 @@ class MarkdownGenerator
 		/** @var Property $property */
 		foreach ( $properties as $property ) {
 			if ( $property->example instanceof Schema ) {
-				$property->example = $this->generator->getSchemes()[$property->example->name];
+				$schema = $property->example;
+
+				// get the global schema
+				$newSchema = clone($this->generator->getSchemes()[$schema->name]); // TODO i dont know if i need to clone the original schema here, currently it works without clone
+
+				// merge schema and global schema withoutFields
+				$ignoreFields = array_unique(array_merge($schema->withoutFields, $newSchema->withoutFields));
+
+				// filter out any unwanted field
+				$properties = array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $ignoreFields));
+
+				// generate table
 				$html .= $this->renderColumnProperty($entry, $property, $level);
-				$html .= $this->getTable('', $entry, $property->example->properties, $level + 1);
+				$html .= $this->getTable('', $entry, $properties, $level + 1);
 			}
 			elseif ( is_array($property->example) ) {
 				$renderProperties = array_filter($property->example, fn(Property $subProperty) => $subProperty instanceof Property);

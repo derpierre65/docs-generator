@@ -10,5 +10,11 @@
         "prefix": "helix",
         "internalName": "helix",
         "url": "https:\/\/api.example.org\/"
+    },
+    "real-api": {
+        "version": "3.0",
+        "prefix": "v1",
+        "internalName": "real-api",
+        "url": "https:\/\/api.example.org\/"
     }
 }

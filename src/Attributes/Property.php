@@ -9,13 +9,17 @@ use Derpierre65\DocsGenerator\Enums\PropertyType;
 class Property
 {
 	public function __construct(
-		public readonly string       $fieldName,
-		public readonly PropertyType $type,
-		public mixed                 $example = null,
-		public string                $description = '',
-		public bool                  $isArray = false,
-		public readonly ?string      $operationId = null,
+		public string           $fieldName,
+		public PropertyType     $type,
+		public mixed            $example = null,
+		public string           $description = '',
+		public bool             $isArray = false,
+		public readonly ?string $operationId = null,
 	) {
+		if ( $this->example instanceof Schema ) {
+			$this->type = PropertyType::SCHEMA;
+		}
+
 		// overwrite default examples for some types
 		if ( $this->example === null && $this->type !== PropertyType::NULL ) {
 			$this->example = match ($this->type) {

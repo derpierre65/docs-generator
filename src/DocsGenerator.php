@@ -74,8 +74,16 @@ class DocsGenerator
 			}
 
 			$reflectionClass = new ReflectionClass($className);
-			$hasSchema = [];
 
+			// looking for api versions
+			foreach ( $reflectionClass->getAttributes(ApiVersion::class) as $_ => $versionAttribute ) {
+				/** @var ApiVersion $version */
+				$version = $versionAttribute->newInstance();
+				$this->apiVersions[$version->internalName ?? $version->version] = $version;
+			}
+
+			// looking for schema
+			$hasSchema = [];
 			foreach ( $reflectionClass->getAttributes(Schema::class) as $aKey => $schema ) {
 				/** @var Schema $schemaInstance */
 				$schemaInstance = $schema->newInstance();
@@ -106,14 +114,6 @@ class DocsGenerator
 			}
 
 			$reflectionClass = new ReflectionClass($className);
-
-			// looking for api versions
-			foreach ( $reflectionClass->getAttributes(ApiVersion::class) as $_ => $versionAttribute ) {
-				/** @var ApiVersion $version */
-				$version = $versionAttribute->newInstance();
-				$this->apiVersions[$version->internalName ?? $version->version] = $version;
-			}
-
 			$classEndpointResource = $this->fetchAttributes($reflectionClass->getAttributes(EndpointResource::class));
 
 			// looking for endpoints
@@ -144,6 +144,7 @@ class DocsGenerator
 						->addScopes($scopes[$endpointInstance->operationId] ?? $scopes['_'] ?? [])
 						->setSummary($summaries[$endpointInstance->operationId] ?? $summaries['_'] ?? null)
 						->setResource($endpointResource[$endpointInstance->operationId] ?? $endpointResource['_'] ?? $classEndpointResource['_'] ?? null);
+
 
 					if ( !empty($propertyList = $properties[$endpointInstance->operationId] ?? $properties['_'] ?? []) ) {
 						$endpointInstance->setProperties($propertyList);
@@ -179,14 +180,15 @@ class DocsGenerator
 			$endpoint->setVersion($this->apiVersions[$endpoint->version]);
 			$finalEndpoints[$endpoint->version][] = $endpoint;
 
-			if ( $endpoint->schema instanceof Schema && !empty($endpoint->schema->properties) ) {
-				if ( array_key_exists($endpoint->schema->name, $this->schemes) ) {
-					$endpoint->schema = $this->schemes[$endpoint->schema->name];
-				}
-				else {
-					$this->log('warning', sprintf('Schema %s does\'nt exists.', $endpoint->schema->name));
-				}
-			}
+			// TODO i don't know why, currently it's not required
+			// if ( $endpoint->schema instanceof Schema && empty($endpoint->schema->properties) ) {
+			// 	if ( array_key_exists($endpoint->schema->name, $this->schemes) ) {
+			// 		$endpoint->schema = $this->schemes[$endpoint->schema->name];
+			// 	}
+			// 	else {
+			// 		$this->log('warning', sprintf('Schema %s does\'nt exists.', $endpoint->schema->name));
+			// 	}
+			// }
 		}
 
 		$this->endpoints = $finalEndpoints;
