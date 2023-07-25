@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Badge :type="badgeColor" :text="type.toUpperCase()" vertical="top" />
-		<code>https://api.yagt.space/v1{{endpoint}}</code>
+		<code>{{endpoint}}</code>
 	</div>
 </template>
 

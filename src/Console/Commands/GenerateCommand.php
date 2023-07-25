@@ -46,8 +46,8 @@ class GenerateCommand extends Command
 			return self::FAILURE;
 		}
 
-		$generator = new DocsGenerator($config['scan_directories'], $config['docs_dir']);
-		$generator->fetch()->saveApiVersionJson();
+		$generator = new DocsGenerator($config);
+		$generator->generate();
 
 		return self::SUCCESS;
 	}

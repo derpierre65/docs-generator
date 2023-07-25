@@ -55,7 +55,7 @@ class ApiVersionTest extends TestCase
 		$this->assertFileDoesNotExist($apiJsonFile = $generator->getApiJsonDirectory());
 
 		// act
-		$generator->fetch()->saveApiVersionJson();
+		$generator->fetch()->generateApiJson();
 
 		$this->assertFileExists($apiJsonFile);
 		$jsonContent = file_get_contents($apiJsonFile);
@@ -81,7 +81,7 @@ class ApiVersionTest extends TestCase
 		$this->assertFileDoesNotExist($apiJsonFile = $generator->getApiJsonDirectory());
 
 		// act
-		$generator->fetch()->saveApiVersionJson();
+		$generator->fetch()->generateApiJson();
 
 		$this->assertFileExists($apiJsonFile);
 		$jsonContent = file_get_contents($apiJsonFile);

@@ -83,6 +83,7 @@ class InitCommand extends Command
 		$importantDirectories = [
 			'/src/.vuepress/components/docs/',
 			'/src/.vuepress/docs/',
+			'/generator/',
 		];
 
 		foreach ( $importantDirectories as $directory ) {

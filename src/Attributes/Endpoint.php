@@ -4,7 +4,6 @@ namespace Derpierre65\DocsGenerator\Attributes;
 
 use Attribute;
 use Derpierre65\DocsGenerator\Enums\EndpointMethod;
-use Derpierre65\DocsGenerator\Enums\TokenType;
 use Derpierre65\DocsGenerator\Helpers\RequireScope;
 use Derpierre65\DocsGenerator\Helpers\ScopeInterface;
 use Derpierre65\DocsGenerator\Helpers\TokenTypeInterface;
@@ -25,6 +24,10 @@ class Endpoint
 	/** @var array TokenTypeInterface[] */
 	protected array $tokenTypes = [];
 
+	protected ?EndpointResource $resource = null;
+
+	protected string $anchor = '';
+
 	public function __construct(
 		public readonly EndpointMethod $method,
 		public readonly string         $version,
@@ -39,6 +42,20 @@ class Endpoint
 				$path,
 			]);
 		}
+	}
+
+	public function addScopes(array $scopes) : static
+	{
+		array_push($this->scopes, ...$scopes);
+
+		return $this;
+	}
+
+	public function setResource(?EndpointResource $resource = null) : static
+	{
+		$this->resource = $resource;
+
+		return $this;
 	}
 
 	public function setSummary(?Summary $summary = null) : static
@@ -74,11 +91,21 @@ class Endpoint
 		return $this;
 	}
 
-	public function addScopes(array $scopes) : static
+	public function setAnchor(string $anchor) : static
 	{
-		array_push($this->scopes, ...$scopes);
+		$this->anchor = $anchor;
 
 		return $this;
+	}
+
+	public function getAnchor() : string
+	{
+		return $this->anchor;
+	}
+
+	public function getResource() : ?EndpointResource
+	{
+		return $this->resource;
 	}
 
 	public function getPath() : string
@@ -126,9 +153,9 @@ class Endpoint
 	public function getTokenTypes() : array
 	{
 		$tokenTypes = [];
-		/** @var TokenType $type */
-		foreach ( $this->tokenTypes->scopeTypes as $type ) {
-			$tokenTypes[] = $type->value;
+		/** @var RequireAnyTokenType $type */
+		foreach ( $this->tokenTypes as $type ) {
+			$tokenTypes[] = $type->scopeTypes;
 		}
 
 		return $tokenTypes;
@@ -139,13 +166,21 @@ class Endpoint
 		return array_merge($this->schema->properties ?? [], $this->properties);
 	}
 
-	public function getData() : array
+	public function getSummary() : ?Summary
+	{
+		return $this->summary;
+	}
+
+	public function toArray() : array
 	{
 		return [
-			'operationName' => $this->operationId,
-			'apiVersion' => $this->apiVersion,
+			'id' => $this->resource?->name . '-' . $this->anchor,
+			'title' => $this->summary?->title,
 			'summary' => $this->summary?->summary,
 			'url' => $this->getPath(),
+			'resource' => $this->resource?->name,
+			'operationId' => $this->operationId,
+			'apiVersion' => $this->apiVersion,
 			'oauth' => [
 				'scopes' => $this->getScopes(),
 				'tokenType' => $this->getTokenTypes(),

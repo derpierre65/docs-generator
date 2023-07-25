@@ -4,11 +4,14 @@ namespace Derpierre65\DocsGenerator;
 
 use Derpierre65\DocsGenerator\Attributes\ApiVersion;
 use Derpierre65\DocsGenerator\Attributes\Endpoint;
+use Derpierre65\DocsGenerator\Attributes\EndpointResource;
 use Derpierre65\DocsGenerator\Attributes\Property;
 use Derpierre65\DocsGenerator\Attributes\RequireAnyScope;
 use Derpierre65\DocsGenerator\Attributes\RequireAnyTokenType;
+use Derpierre65\DocsGenerator\Attributes\Response;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\Attributes\Summary;
+use Derpierre65\DocsGenerator\Generator\MarkdownGenerator;
 use Derpierre65\DocsGenerator\Helpers\RequireScope;
 use ReflectionClass;
 use SplFileInfo;
@@ -16,7 +19,7 @@ use Symfony\Component\Finder\Finder;
 
 class DocsGenerator
 {
-	protected array $directories;
+	protected array $scanDirectories = [];
 
 	protected array $endpoints = [];
 
@@ -25,21 +28,33 @@ class DocsGenerator
 
 	protected array $schemes = [];
 
-	public function __construct(array $scanDirectories, public readonly string $docsDirectory)
+	protected array $config;
+
+	public function __construct($config)
 	{
-		$this->directories = [];
-		foreach ( $scanDirectories as $directory => $namespace ) {
-			$this->directories[$this->normalizeDir($directory)] = $this->normalizeNamespace($namespace);
+		$this->config = $config;
+
+		// initialize scan directories
+		foreach ( $config['scan_directories'] as $directory => $namespace ) {
+			$this->scanDirectories[$this->normalizeDir($directory)] = $this->normalizeNamespace($namespace);
 		}
+	}
+
+	public function generate() : void
+	{
+		$this
+			->fetch()
+			->generateApiJson()
+			->generateMarkdownFiles();
 	}
 
 	public function fetch() : static
 	{
-		$files = $this->getFiles($directories = array_keys($this->directories));
+		$files = $this->getFiles($directories = array_keys($this->scanDirectories));
 		$files = array_map(function (SplFileInfo $fileInfo) use ($directories) : ?string {
 			foreach ( $directories as $directory ) {
 				if ( str_starts_with($this->normalizeDir($fileInfo->getPathname()), $directory) ) {
-					return $this->directories[$directory].str_replace('/', '\\', substr(
+					return $this->scanDirectories[$directory].str_replace('/', '\\', substr(
 							$fileInfo->getPathname(),
 							strlen($directory),
 							strlen($fileInfo->getPathname()) - strlen($directory) - 4
@@ -52,15 +67,15 @@ class DocsGenerator
 
 		$this->endpoints = $this->apiVersions = $this->schemes = [];
 
+		// look for all existing schemes in all files before scan for endpoints
 		foreach ( $files as $key => $className ) {
 			if ( !$className ) {
 				continue;
 			}
 
 			$reflectionClass = new ReflectionClass($className);
-
-			// looking for schema attributes
 			$hasSchema = [];
+
 			foreach ( $reflectionClass->getAttributes(Schema::class) as $aKey => $schema ) {
 				/** @var Schema $schemaInstance */
 				$schemaInstance = $schema->newInstance();
@@ -70,7 +85,7 @@ class DocsGenerator
 				}
 
 				$this->schemes[$schemaName] = $schemaInstance;
-				$hasSchema[] = $schemaName;
+				$hasSchema[] = $schemaInstance->name;
 			}
 
 			// looking for property attributes
@@ -82,6 +97,15 @@ class DocsGenerator
 					}
 				}
 			}
+		}
+
+		// now we have all schemes, lets scan the project for endpoints
+		foreach ( $files as $key => $className ) {
+			if ( !$className ) {
+				continue;
+			}
+
+			$reflectionClass = new ReflectionClass($className);
 
 			// looking for api versions
 			foreach ( $reflectionClass->getAttributes(ApiVersion::class) as $_ => $versionAttribute ) {
@@ -89,6 +113,8 @@ class DocsGenerator
 				$version = $versionAttribute->newInstance();
 				$this->apiVersions[$version->internalName ?? $version->version] = $version;
 			}
+
+			$classEndpointResource = $this->fetchAttributes($reflectionClass->getAttributes(EndpointResource::class));
 
 			// looking for endpoints
 			foreach ( $reflectionClass->getMethods() as $rKey => $reflectionProperty ) {
@@ -99,14 +125,25 @@ class DocsGenerator
 					$reflectionProperty->getAttributes(RequireAnyScope::class),
 				), true);
 				$properties = $this->fetchAttributes($reflectionProperty->getAttributes(Property::class), true);
+				$endpointResource = $this->fetchAttributes($reflectionProperty->getAttributes(EndpointResource::class));
+				$responses = $this->fetchAttributes($reflectionProperty->getAttributes(Response::class));
 
 				foreach ( $reflectionProperty->getAttributes(Endpoint::class) as $subKey => $endpoint ) {
 					/** @var Endpoint $endpointInstance */
 					$endpointInstance = $endpoint->newInstance();
+
+					// TODO better merge, allow multiple schemes as default response
+					$response = $responses[$endpointInstance->operationId] ?? $responses['_'] ?? null;
+					if ( $response && $response->properties instanceof Schema ) {
+						$endpointInstance->schema = $this->schemes[$response->properties->name];
+					}
+
 					// TODO maybe need to merge _ operation scopes/properties?
 					// TODO maybe make operationId possible to an array?
-					$endpointInstance->addScopes($scopes[$endpointInstance->operationId] ?? $scopes['_'] ?? []);
-					$endpointInstance->setSummary($summaries[$endpointInstance->operationId] ?? $summaries['_'] ?? null);
+					$endpointInstance
+						->addScopes($scopes[$endpointInstance->operationId] ?? $scopes['_'] ?? [])
+						->setSummary($summaries[$endpointInstance->operationId] ?? $summaries['_'] ?? null)
+						->setResource($endpointResource[$endpointInstance->operationId] ?? $endpointResource['_'] ?? $classEndpointResource['_'] ?? null);
 
 					if ( !empty($propertyList = $properties[$endpointInstance->operationId] ?? $properties['_'] ?? []) ) {
 						$endpointInstance->setProperties($propertyList);
@@ -125,13 +162,24 @@ class DocsGenerator
 		foreach ( $this->endpoints as $endpoint ) {
 			if ( !isset($this->apiVersions[$endpoint->version]) ) {
 				$this->log('error', sprintf('Api version %s not found', $endpoint->version));
-			}
-			else {
-				$endpoint->setVersion($this->apiVersions[$endpoint->version]);
-				$finalEndpoints[$endpoint->version][] = $endpoint;
+				continue;
 			}
 
-			if ( $endpoint->schema instanceof Schema && empty($endpoint->schema->properties) ) {
+			$endpointIdentifier = json_encode($endpoint);
+			if ( !$endpoint->getResource() ) {
+				$this->log('error', sprintf('Endpoint %s has no resource', $endpointIdentifier));
+				continue;
+			}
+
+			if ( !$endpoint->getSummary() ) {
+				$this->log('error', 'Found endpoint without an summary: '.$endpointIdentifier);
+				continue;
+			}
+
+			$endpoint->setVersion($this->apiVersions[$endpoint->version]);
+			$finalEndpoints[$endpoint->version][] = $endpoint;
+
+			if ( $endpoint->schema instanceof Schema && !empty($endpoint->schema->properties) ) {
 				if ( array_key_exists($endpoint->schema->name, $this->schemes) ) {
 					$endpoint->schema = $this->schemes[$endpoint->schema->name];
 				}
@@ -143,31 +191,50 @@ class DocsGenerator
 
 		$this->endpoints = $finalEndpoints;
 
+		// get anchors
+		foreach ( $this->endpoints as $apiVersion => $endpoints ) {
+			$anchors = [];
+			/** @var Endpoint $endpoint */
+			foreach ( $endpoints as $key => $endpoint ) {
+				$resource = $endpoint->getResource();
+				$summary = $endpoint->getSummary();
+				$anchor = $summary->getAnchor();
+
+				$anchorNumber = 0;
+				while ( !empty($anchors[$resource->name]) && in_array($anchor, $anchors[$resource->name]) ) {
+					$anchorNumber++;
+					$anchor = $summary->getAnchor().'-'.$anchorNumber;
+				}
+
+				$endpoint->setAnchor($anchor);
+				$anchors[$resource->name][] = $anchor;
+			}
+		}
+
 		return $this;
 	}
 
-	public function saveApiVersionJson() : void
+	public function generateApiJson() : static
 	{
 		$jsonContent = json_encode(array_map(fn(ApiVersion $version) => $version->toArray(), $this->getApiVersions()), JSON_PRETTY_PRINT);
-		if ( !file_exists($this->docsDirectory) ) {
+		if ( !file_exists($this->config['docs_dir']) ) {
 			$this->log('error', 'src-docs directory doesn\'t exist.');
 
-			return;
+			return $this;
 		}
 
 		if ( !file_exists($dirname = dirname($jsonFile = $this->getApiJsonDirectory())) ) {
 			mkdir($dirname, recursive: true);
 		}
 		file_put_contents($jsonFile, $jsonContent);
+
+		return $this;
 	}
 
-	public function generate() : void
+	public function generateMarkdownFiles() : void
 	{
-		if ( empty($this->endpoints) ) {
-			return;
-		}
-
-		dd('TODO generate documentation files');
+		$generator = new MarkdownGenerator($this, $this->config);
+		$generator->generateResourcesList();
 	}
 
 	protected function fetchAttributes(array $attributes, bool $asArray = false) : array
@@ -217,7 +284,7 @@ class DocsGenerator
 	//<editor-fold desc="getters">
 	public function getApiJsonDirectory() : string
 	{
-		return $this->docsDirectory.'/src/.vuepress/api.json';
+		return $this->config['docs_dir'].'/src/.vuepress/api.json';
 	}
 
 	public function getEndpoints() : array

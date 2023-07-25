@@ -21,7 +21,7 @@ use Derpierre65\DocsGenerator\Helpers\RequireScope;
 #[EndpointResource('User')]
 class TestController extends Controller
 {
-	#[Summary('Get list of Users @index')]
+	#[Summary('Get Users', 'Get list of Users @index')]
 	#[Endpoint(EndpointMethod::GET, 'kraken', 'users', operationId: 'kraken-users-index')]
 	#[Endpoint(EndpointMethod::GET, 'helix', 'users', operationId: 'helix-users-index')]
 	#[RequireAnyTokenType([TokenType::CLIENT_ACCESS_TOKEN, TokenType::USER_ACCESS_TOKEN])]
@@ -30,8 +30,8 @@ class TestController extends Controller
 	#[Response(new Schema('Test'))]
 	public function index(){}
 
-	#[Summary('Get list of Users @index2')]
-	#[Summary('Get list of Users with social connections @index2', 'helix-users-index-2')]
+	#[Summary('Get Users', 'Get list of Users @index2')]
+	#[Summary('Get Users', 'Get list of Users with social connections @index2', 'helix-users-index-2')]
 	#[Endpoint(EndpointMethod::GET, 'kraken', 'users', new Schema('Test'))]
 	#[Endpoint(EndpointMethod::GET, 'helix', 'users', new Schema('Test2'), 'helix-users-index-2')]
 	#[RequireAnyTokenType([TokenType::CLIENT_ACCESS_TOKEN, TokenType::USER_ACCESS_TOKEN])]
@@ -39,7 +39,7 @@ class TestController extends Controller
 	#[RequireScope(Scope::MY_SECOND_TEST_SCOPE, operationId: 'helix-users-index-2')] // only required for 'helix-users-index-2' route
 	public function index2() {}
 
-	#[Summary('Get list of Users')]
+	#[Summary('Get Users', 'Get list of Users')]
 	#[Endpoint(EndpointMethod::GET, 'kraken', 'users', new Schema('Test'), 'kraken-users-index-3')]
 	#[Endpoint(EndpointMethod::GET, 'helix', 'users', new Schema('Test2'), 'helix-users-index-3')]
 	#[RequireAnyTokenType([TokenType::CLIENT_ACCESS_TOKEN, TokenType::USER_ACCESS_TOKEN], 'kraken-users-index-3')]
@@ -47,7 +47,15 @@ class TestController extends Controller
 	#[RequireScope(ScopeEnum::MY_TEST_SCOPE)]
 	#[RequireAnyScope(ScopeEnum::MY_THIRD_SCOPE)]
 	#[RequireAnyScope(ScopeEnum::MY_SECOND_TEST_SCOPE)]
-	#[Property('test', PropertyType::ARRAY, ['test', 'test2'], 'kraken-users-index-3')]
+	#[Property('a', PropertyType::OBJECT, [
+		new Property('b', PropertyType::OBJECT, [
+			new Property('c', PropertyType::OBJECT, [
+				new Property('d', PropertyType::OBJECT, [
+					new Property('enabled', PropertyType::BOOLEAN),
+				]),
+			]),
+		]),
+	], operationId: 'kraken-users-index-3')]
 	#[ResponseCode(200, 'Successfully retrieved the list of Users.')]
 	#[ResponseCode(400, 'broadcaster_id query parameter is required.')]
 	#[ResponseCode(400, 'The ID in the user_id query parameter is not valid')]
@@ -63,48 +71,11 @@ class TestController extends Controller
 	#[ResponseCode(401, 'The [user access token] must include the [channel:read:vips and channel:manage:vips] scopes.')]
 	public function index3() {}
 
-	// #[Summary('Get list of Users')]
-	// #[Endpoint(EndpointMethod::GET, 'kraken-users-index-3', 'kraken', 'users', scopes: [Scope::MY_SECOND_TEST_SCOPE], schema: new Schema('Test'))]
-	// #[Endpoint(EndpointMethod::GET, 'helix-users-index-3', 'helix', 'users', schema: new Schema('Test2'))]
-	// #[RequireAnyTokenType([AccessTokenType::APP_TOKEN, AccessTokenType::USER_ACCESS_TOKEN], 'kraken-users-index-3')]
-	// #[RequireAnyTokenType([AccessTokenType::USER_ACCESS_TOKEN], 'helix-users-index-3')]
-	// #[RequireScope(ScopeEnum::MY_TEST_SCOPE)]
-	// #[Property('new_field', PropertyType::INTEGER, 42)]
-	// public function index4() {
-	//
-	// }
-	//
-	// #[Summary('Get list of Users')]
-	// #[Endpoint(
-	// 	EndpointMethod::GET,
-	// 	'users-id',
-	// 	'kraken',
-	// 	'users/{user_id}',
-	// 	new RequireAnyTokenType([AccessTokenType::APP_TOKEN, AccessTokenType::USER_ACCESS_TOKEN]),
-	// 	[new RequireScope(Scope::MY_TEST_SCOPE)],
-	// )]
-	// #[Endpoint(
-	// 	EndpointMethod::GET,
-	// 	'users-me',
-	// 	'kraken',
-	// 	'users/@me',
-	// 	new RequireAnyTokenType([AccessTokenType::USER_ACCESS_TOKEN]),
-	// 	[new RequireScope(Scope::MY_TEST_SCOPE)],
-	// )]
-	// #[Endpoint(
-	// 	EndpointMethod::GET,
-	// 	'users-token-test',
-	// 	'kraken',
-	// 	'users/@token',
-	// 	new RequireAnyTokenType([AccessTokenType::USER_ACCESS_TOKEN]),
-	// 	[new RequireScope(Scope::MY_TEST_SCOPE)],
-	// 	new Schema('Test'),
-	// )]
-	// #[Response(new Schema('Test'))]
-	// #[Response(new Schema('Test2'), 'users-me')]
-	// public function view()
-	// {
-	// }
+	#[EndpointResource('My Test')]
+	#[Summary('Get Test', 'Hihi not a user resource in my user controller')]
+	#[Endpoint(EndpointMethod::GET, 'kraken', 'not-an-user')]
+	#[Response(new Schema('Test3'))]
+	public function nonUserResourceEndpoint() {}
 
 	public function store()
 	{

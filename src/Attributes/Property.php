@@ -12,6 +12,8 @@ class Property
 		public readonly string       $fieldName,
 		public readonly PropertyType $type,
 		public mixed                 $example = null,
+		public string                $description = '',
+		public bool                  $isArray = false,
 		public readonly ?string      $operationId = null,
 	) {
 		// overwrite default examples for some types

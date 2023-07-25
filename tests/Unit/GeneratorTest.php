@@ -22,6 +22,6 @@ class GeneratorTest extends TestCase
 	{
 		$generator = $this->initializeGenerator('ApiVersion1');
 
-		$generator->fetch()->saveApiVersionJson();
+		$generator->fetch()->generateApiJson();
 	}
 }

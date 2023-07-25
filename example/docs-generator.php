@@ -13,4 +13,6 @@ return [
 	'scan_directories' => [
 		__DIR__.'/src' => 'Derpierre65\\DocsGenerator\\Example',
 	],
+
+	'template_path' => __DIR__.'/src-docs/generator/',
 ];
