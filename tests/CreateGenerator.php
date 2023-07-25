@@ -14,11 +14,9 @@ trait CreateGenerator
 	public function initializeGenerator(string $testCase) : DocsGenerator
 	{
 		$docsDirectory = __DIR__.'/src-docs';
-		$generator = new DocsGenerator(
-			__DIR__.'/Examples/'.$testCase,
-			'Derpierre65\DocsGenerator\Tests\Examples\\'.$testCase,
-			$docsDirectory,
-		);
+		$generator = new DocsGenerator([
+			__DIR__.'/Examples/'.$testCase => 'Derpierre65\DocsGenerator\Tests\Examples\\'.$testCase,
+		], $docsDirectory);
 		if ( !file_exists($docsDirectory) ) {
 			mkdir($docsDirectory);
 		}

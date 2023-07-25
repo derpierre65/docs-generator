@@ -7,12 +7,10 @@ return [
 	'docs_dir' => __DIR__.'/src-docs',
 
 	/**
-	 * Your app source directory where you define every routes.
+	 * List of your app source directories to scan for endpoints.
+	 * Use your directory as key and your namespace as value.
 	 */
-	'src_dir' => __DIR__.'/src',
-
-	/**
-	 * Your namespace for the classes
-	 */
-	'namespace' => 'Derpierre65\\DocsGenerator\\Example\\',
+	'scan_directories' => [
+		__DIR__.'/src' => 'Derpierre65\\DocsGenerator\\Example',
+	],
 ];

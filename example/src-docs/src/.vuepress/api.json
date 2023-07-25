@@ -1,0 +1,14 @@
+{
+    "kraken": {
+        "version": "1.0",
+        "prefix": "kraken",
+        "internalName": "kraken",
+        "url": "https:\/\/api.example.org\/"
+    },
+    "helix": {
+        "version": "2.0",
+        "prefix": "helix",
+        "internalName": "helix",
+        "url": "https:\/\/api.example.org\/"
+    }
+}

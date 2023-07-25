@@ -32,7 +32,7 @@ class GenerateCommand extends Command
 
 		$config = require_once($configPath);
 
-		foreach ( ['docs_dir', 'src_dir', 'namespace'] as $key ) {
+		foreach ( ['docs_dir', 'scan_directories'] as $key ) {
 			if ( !array_key_exists($key, $config) ) {
 				$this->cli->error('Config key {key} not found.', ['key' => $key]);
 
@@ -40,15 +40,14 @@ class GenerateCommand extends Command
 			}
 		}
 
-		$generator = new DocsGenerator(
-			$config['src_dir'],
-			$config['namespace'],
-			$config['docs_dir']
-		);
+		if ( !is_array($config['scan_directories']) || empty($config['scan_directories']) ) {
+			$this->cli->error('No scan directories found in config.');
 
+			return self::FAILURE;
+		}
+
+		$generator = new DocsGenerator($config['scan_directories'], $config['docs_dir']);
 		$generator->fetch()->saveApiVersionJson();
-
-
 
 		return self::SUCCESS;
 	}

@@ -1,4 +1,9 @@
 vendor/
 .idea/
 
+# example files
+example/src-docs/package-lock.json
+
+# tests
+tests/src-docs/
 .phpunit.result.cache

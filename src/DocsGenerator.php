@@ -25,11 +25,12 @@ class DocsGenerator
 
 	protected array $schemes = [];
 
-	public function __construct(string $directory, string $namespace, public readonly string $docsDirectory)
+	public function __construct(array $scanDirectories, public readonly string $docsDirectory)
 	{
-		$this->directories = [
-			$this->normalizeDir($directory) => $namespace,
-		];
+		$this->directories = [];
+		foreach ( $scanDirectories as $directory => $namespace ) {
+			$this->directories[$this->normalizeDir($directory)] = $this->normalizeNamespace($namespace);
+		}
 	}
 
 	public function fetch() : static
@@ -193,6 +194,11 @@ class DocsGenerator
 	protected function normalizeDir(string $dir) : array|string
 	{
 		return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $dir);
+	}
+
+	protected function normalizeNamespace(string $namespace) : string
+	{
+		return rtrim($namespace, '\\');
 	}
 
 	protected function log(string $type, string $message) : void
