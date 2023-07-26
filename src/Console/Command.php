@@ -8,11 +8,14 @@ use splitbrain\phpcli\Options;
 abstract class Command
 {
 	public const SUCCESS = 0;
+
 	public const FAILURE = 1;
+
 	public const INVALID = 2;
 
 	/** @var string */
 	public $signature;
+
 	/** @var string */
 	public $description;
 
@@ -20,7 +23,7 @@ abstract class Command
 
 	protected ?Options $options;
 
-	abstract function handle(): int;
+	abstract function handle() : int;
 
 	public function prepare(CLI $cli, Options $options) : void
 	{
@@ -28,5 +31,14 @@ abstract class Command
 		$this->options = $options;
 	}
 
-	public function registerArguments(Options $options) {}
+	public function registerArguments(Options $options)
+	{
+	}
+
+	public function hasOption(string $option, string $short = '') : bool
+	{
+		$args = array_map('strtolower', $this->options->getArgs());
+
+		return in_array('--'.$option, $args) || $short && in_array('-'.$short, $args);
+	}
 }

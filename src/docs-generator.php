@@ -13,4 +13,18 @@ return [
 	'scan_directories' => [
 		// __DIR__ => 'App',
 	],
+
+	'options' => [
+		/**
+		 * If true, the generator will generate for every resource a single page.
+		 * If false, all resources will be generated together as a single page.
+		 */
+		'generate_separate_resource_pages' => true,
+
+		/**
+		 * If true, the generator will generate all properties of a schema in the response body.
+		 * If false, the generator use the schema name as response type.
+		 */
+		'resolve_schema_in_response' => true,
+	],
 ];

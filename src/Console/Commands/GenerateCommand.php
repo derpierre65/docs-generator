@@ -18,6 +18,7 @@ class GenerateCommand extends Command
 
 	public function registerArguments(Options $options) : void
 	{
+		$options->registerOption('watch', 'Generate the documentation after any change', 'w', command: $this->signature);
 		$options->registerArgument('config-path', 'Path for your docs-generator config file.', true, $this->signature);
 	}
 
@@ -48,6 +49,17 @@ class GenerateCommand extends Command
 
 		$generator = new DocsGenerator($config);
 		$generator->generate();
+
+		// if ( $this->hasOption('watch', 'w') ) {
+		// 	Watch::paths(array_keys($config['scan_directories']))
+		// 		->onAnyChange(function (string $type, string $path) use ($config) {
+		// 			$this->cli->info('Detected change in '. $path. ', generate the docs');
+		// 			$generator = new DocsGenerator($config);
+		// 			$generator->generate();
+		// 		})
+		// 		->setIntervalTime(500)
+		// 		->start();
+		// }
 
 		return self::SUCCESS;
 	}

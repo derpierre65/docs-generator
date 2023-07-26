@@ -1,6 +1,4 @@
----
-sidebarDepth: 1
----
+%header%
 
 <docs-Endpoint>
 
