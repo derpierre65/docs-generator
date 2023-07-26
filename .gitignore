@@ -1,5 +1,6 @@
 vendor/
 .idea/
+node_modules/
 
 # example files
 example/src-docs/package-lock.json

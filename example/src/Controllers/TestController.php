@@ -77,6 +77,16 @@ class TestController extends Controller
 	#[Response(new Schema('Test3'))]
 	public function nonUserResourceEndpoint() {}
 
+	// first idea to build easier html into a description
+	// #[Summary('Get Test', [
+	// 	new Element('span', 'This is my text'),
+	// 	new Element('ul', [
+	// 		'List Item 1',
+	// 		'List Item 2',
+	// 	]),
+	// 	new Element('strong', 'My strong Text'),
+	// 	new Element('a', 'My Text', ['href' => 'https://google.de/', 'target' => '_blank']),
+	// ])]
 	public function store()
 	{
 	}

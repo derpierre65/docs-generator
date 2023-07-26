@@ -26,5 +26,18 @@ return [
 		 * If false, the generator use the schema name as response type.
 		 */
 		'resolve_schema_in_response' => true,
+
+		/**
+		 * option if generate_separate_resource_pages is true
+		 */
+		'append_resources_table_in_single_page' => true,
+
+		'clear_directory_before_generate' => true,
+	],
+
+	'defaults' => [
+		'property_response_description' => 'No description',
+		'property_query_description' => 'No description',
+		'property_body_description' => 'No description',
 	],
 ];

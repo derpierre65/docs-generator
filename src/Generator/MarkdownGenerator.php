@@ -6,6 +6,7 @@ use Derpierre65\DocsGenerator\Attributes\Endpoint;
 use Derpierre65\DocsGenerator\Attributes\Property;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\DocsGenerator;
+use Derpierre65\DocsGenerator\Enums\Generator\TableType;
 
 class MarkdownGenerator
 {
@@ -16,7 +17,9 @@ class MarkdownGenerator
 	public function generateResourcesList() : static
 	{
 		foreach ( $this->generator->getEndpoints() as $version => $endpoints ) {
-			$this->generateIndexResourceList($version, $endpoints);
+			if ( $this->config['options']['generate_separate_resource_pages'] ) {
+				$this->generateIndexResourceList($version, $endpoints);
+			}
 			$this->generateResourceIndex($version, $endpoints);
 		}
 
@@ -26,11 +29,11 @@ class MarkdownGenerator
 	protected function generateResourceIndex(string $version, array $endpoints) : void
 	{
 		$html = $resources = [];
-		$entryTemplate = $this->getTemplate('resources-index-entry');
-		$indexTemplate = $this->getTemplate('resources-index');
-		$resourceIndexHeaderTemplate = $this->getTemplate('resources-index-header');
-		$responseEntryTemplate = $this->getTemplate('resources-index-response-entry');
-		$responseIndexTemplate = $this->getTemplate('resources-index-response-index');
+		$endpointTemplate = $this->getTemplate('endpoint');
+		$indexTemplate = $this->getTemplate('resource-list-index');
+		$resourceIndexHeaderTemplate = $this->getTemplate('resource-list-header');
+		$responseEntryTemplate = $this->getTemplate('endpoint-response-entry');
+		$responseIndexTemplate = $this->getTemplate('endpoint-response-index');
 
 		/** @var Endpoint $endpoint */
 		foreach ( $endpoints as $index => $endpoint ) {
@@ -42,7 +45,7 @@ class MarkdownGenerator
 				$resources[$resource->name] = $resource;
 			}
 
-			$html[$resource->name] .= $this->replaceTemplateVariables($entryTemplate, [
+			$html[$resource->name] .= $this->replaceTemplateVariables($endpointTemplate, [
 				'endpoint_title' => $summary->title,
 				'endpoint_summary' => $summary->summary,
 				'endpoint_method' => $endpoint->method->value,
@@ -51,6 +54,7 @@ class MarkdownGenerator
 				'query_parameters' => '', // TODO
 				'body_parameters' => '', // TODO
 				'response_body' => $this->getTable(
+					TableType::RESPONSE,
 					$responseIndexTemplate,
 					$responseEntryTemplate,
 					$endpoint->getProperties(),
@@ -76,6 +80,11 @@ class MarkdownGenerator
 		else {
 			$indexHtml = '';
 			$header = $resourceIndexHeaderTemplate;
+
+			if ( $this->config['options']['append_resources_table_in_single_page'] ) {
+				$header .= $this->generateIndexResourceList($version, $endpoints, true);
+			}
+
 			foreach ( $resources as $resourceName => $resource ) {
 				$indexHtml .= $this->replaceTemplateVariables($indexTemplate, [
 					'header' => $header,
@@ -92,7 +101,7 @@ class MarkdownGenerator
 		}
 	}
 
-	protected function getTable(string $header, string $entry, array $properties, $level = 0, bool $shouldResolveSchema = false)
+	protected function getTable(TableType $type, string $header, string $entry, array $properties, $level = 0, bool $shouldResolveSchema = false)
 	{
 		if ( empty($properties) ) {
 			return '';
@@ -104,13 +113,13 @@ class MarkdownGenerator
 		foreach ( $properties as $property ) {
 			if ( $property->example instanceof Schema ) {
 				// append original property
-				$html .= $this->renderColumnProperty($entry, $property, $level, !$shouldResolveSchema);
+				$html .= $this->renderColumnProperty($type, $entry, $property, $level, !$shouldResolveSchema);
 
 				if ( $shouldResolveSchema ) {
 					$schema = $property->example;
 
 					// get the global schema
-					$newSchema = clone($this->generator->getSchemes()[$schema->name]); // TODO i dont know if i need to clone the original schema here, currently it works without clone
+					$newSchema = ($this->generator->getSchemes()[$schema->name]); // TODO i dont know if i need to clone the original schema here, currently it works without clone
 
 					// merge schema and global schema withoutFields
 					$ignoreFields = array_unique(array_merge($schema->withoutFields, $newSchema->withoutFields));
@@ -118,19 +127,19 @@ class MarkdownGenerator
 					// filter out any unwanted field
 					$properties = array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $ignoreFields));
 
-					$html .= $this->getTable('', $entry, $properties, $level + 1);
+					$html .= $this->getTable($type, '', $entry, $properties, $level + 1);
 				}
 			}
 			elseif ( is_array($property->example) ) {
 				$renderProperties = array_filter($property->example, fn(Property $subProperty) => $subProperty instanceof Property);
 
 				if ( !empty($renderProperties) ) {
-					$html .= $this->renderColumnProperty($entry, $property, $level);
-					$html .= $this->getTable('', $entry, $renderProperties, $level + 1);
+					$html .= $this->renderColumnProperty($type, $entry, $property, $level);
+					$html .= $this->getTable($type, '', $entry, $renderProperties, $level + 1);
 				}
 			}
 			else {
-				$html .= $this->renderColumnProperty($entry, $property, $level);
+				$html .= $this->renderColumnProperty($type, $entry, $property, $level);
 			}
 		}
 
@@ -147,17 +156,19 @@ class MarkdownGenerator
 		return $html;
 	}
 
-	protected function renderColumnProperty(string $template, Property $property, int $level = 0, bool $useSchemaName = false) : string
+	protected function renderColumnProperty(TableType $type, string $template, Property $property, int $level = 0, bool $useSchemaName = false) : string
 	{
 		return $this->replaceTemplateVariables($template, [
 			// using &nbsp; to force spaces
 			'name' => str_repeat('&nbsp;&nbsp;&nbsp;', $level).$property->fieldName,
 			'type' => ucfirst($useSchemaName && $property->example instanceof Schema ? $property->example->name : $property->type->value).($property->isArray ? '[]' : ''),
-			'description' => $property->description,
+			'description' => $property->description ?: $this->config['defaults']['property_'.$type->value.'_description'],
+			'example' => is_object($property->example) || is_array($property->example) ? '' : $property->example,
+			'required' => false,
 		]);
 	}
 
-	protected function generateIndexResourceList(string $version, array $endpoints) : void
+	protected function generateIndexResourceList(string $version, array $endpoints, $returnHtml = false) : string
 	{
 		$entryTemplate = $this->getTemplate('resources-list-entry');
 		$html = '';
@@ -170,15 +181,21 @@ class MarkdownGenerator
 			$html .= $this->replaceTemplateVariables($entryTemplate, [
 				'endpoint_resource' => $resource->name,
 				'endpoint_name' => $summary->title,
-				'endpoint_url' => $resource->getPathURL().'/README.md',
+				'endpoint_url' => ($this->config['options']['generate_separate_resource_pages'] ? $resource->getPathURL() : '').'/README.md',
 				'endpoint_anchor' => $endpoint->getAnchor(),
 				'endpoint_summary' => $summary->summary,
 			]);
 		}
 
-		$this->saveFile($this->config['docs_dir'].'/src/'.$version.'/README.md', $this->replaceTemplateVariables($this->getTemplate('resources-list'), [
+		$html = $this->replaceTemplateVariables($this->getTemplate('resources-list'), [
 			'resource_list_entry' => $html,
-		]));
+		]);
+
+		if ( !$returnHtml ) {
+			$this->saveFile($this->config['docs_dir'].'/src/'.$version.'/README.md', $html);
+		}
+
+		return $html;
 	}
 
 	protected function replaceTemplateVariables(string $template, array $variables) : string

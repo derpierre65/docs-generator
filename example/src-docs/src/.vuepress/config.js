@@ -21,7 +21,11 @@ export default defineUserConfig({
 		// editLinkText: 'Edit me',
 		// repo: 'derpierre65/docs-generator',
 		// editLinkPattern: ':repo/edit/:branch/:path',
-		navbar: [],
+		navbar: [
+			{text: 'Kraken', link: '/kraken/'},
+			{text: 'Helix', link: '/helix/'},
+			{text: 'Real API', link: '/real-api/'},
+		],
 		sidebar: {
 			/*'/resources/my-api-version': [
 				{
