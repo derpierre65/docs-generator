@@ -13,12 +13,18 @@ trait CreateGenerator
 {
 	public function initializeGenerator(string $testCase) : DocsGenerator
 	{
-		$docsDirectory = __DIR__.'/src-docs';
-		$generator = new DocsGenerator([
-			__DIR__.'/Examples/'.$testCase => 'Derpierre65\DocsGenerator\Tests\Examples\\'.$testCase,
-		], $docsDirectory);
-		if ( !file_exists($docsDirectory) ) {
-			mkdir($docsDirectory);
+		$docsPath = __DIR__.'/src-docs';
+		$config = [
+			'docs_dir' => $docsPath,
+			'scan_directories' => [
+				__DIR__.'/Examples/'.$testCase => 'Derpierre65\DocsGenerator\Tests\Examples\\'.$testCase,
+			],
+			'template_path' => $docsPath.'/generator',
+		];
+
+		$generator = new DocsGenerator($config);
+		if ( !file_exists($config['docs_dir']) ) {
+			mkdir($config['docs_dir']);
 		}
 
 		return $generator;

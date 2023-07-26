@@ -16,10 +16,6 @@ class Property
 		public bool             $isArray = false,
 		public readonly ?string $operationId = null,
 	) {
-		if ( $this->example instanceof Schema ) {
-			$this->type = PropertyType::SCHEMA;
-		}
-
 		// overwrite default examples for some types
 		if ( $this->example === null && $this->type !== PropertyType::NULL ) {
 			$this->example = match ($this->type) {

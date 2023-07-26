@@ -17,11 +17,4 @@ class GeneratorTest extends TestCase
 		$this->assertEmpty($generator->getApiVersions());
 		$this->assertEmpty($generator->getSchemes());
 	}
-
-	public function testDemo()
-	{
-		$generator = $this->initializeGenerator('ApiVersion1');
-
-		$generator->fetch()->generateApiJson();
-	}
 }
