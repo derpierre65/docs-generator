@@ -2,6 +2,7 @@
 
 namespace Derpierre65\DocsGenerator\Generator;
 
+use Derpierre65\DocsGenerator\Attributes\ApiVersion;
 use Derpierre65\DocsGenerator\Attributes\Endpoint;
 use Derpierre65\DocsGenerator\Attributes\Property;
 use Derpierre65\DocsGenerator\Attributes\Schema;
@@ -17,21 +18,22 @@ class MarkdownGenerator
 	public function generateResourcesList() : static
 	{
 		foreach ( $this->generator->getEndpoints() as $version => $endpoints ) {
+			$apiVersion = $this->generator->getApiVersions()[$version];
 			if ( $this->config['options']['generate_separate_resource_pages'] ) {
-				$this->generateIndexResourceList($version, $endpoints);
+				$this->generateIndexResourceList($apiVersion, $endpoints);
 			}
-			$this->generateResourceIndex($version, $endpoints);
+			$this->generateResourceIndex($apiVersion, $endpoints);
 		}
 
 		return $this;
 	}
 
-	protected function generateResourceIndex(string $version, array $endpoints) : void
+	protected function generateResourceIndex(ApiVersion $version, array $endpoints) : void
 	{
 		$html = $resources = [];
 		$endpointTemplate = $this->getTemplate('endpoint');
-		$indexTemplate = $this->getTemplate('resource-list-index');
-		$resourceIndexHeaderTemplate = $this->getTemplate('resource-list-header');
+		$indexTemplate = $this->getTemplate('resource-index');
+		$resourceIndexHeaderTemplate = $this->getTemplate('resource-header');
 		$responseEntryTemplate = $this->getTemplate('endpoint-response-entry');
 		$responseIndexTemplate = $this->getTemplate('endpoint-response-index');
 
@@ -62,13 +64,14 @@ class MarkdownGenerator
 					$this->config['options']['resolve_schema_in_response']
 				),
 				'response_codes' => '', // TODO
+				'response_example' => json_encode(new \stdClass(), JSON_PRETTY_PRINT),
 			]);
 		}
 
 		if ( $this->config['options']['generate_separate_resource_pages'] ) {
 			foreach ( $resources as $resourceName => $resource ) {
 				$this->saveFile(
-					$this->config['docs_dir'].'/src/'.$version.'/'.$resource->getPathURL().'/README.md',
+					$this->config['docs_dir'].'/src/'.$version->version.'/'.$resource->getPathURL().'/README.md',
 					$this->replaceTemplateVariables($indexTemplate, [
 						'header' => $resourceIndexHeaderTemplate,
 						'resource_name' => $resourceName,
@@ -95,13 +98,13 @@ class MarkdownGenerator
 				$header = '';
 			}
 
-			$this->saveFile($this->config['docs_dir'].'/src/'.$version.'/README.md', $this->replaceTemplateVariables($indexHtml, [
+			$this->saveFile($this->config['docs_dir'].'/src/'.$version->version.'/README.md', $this->replaceTemplateVariables($indexHtml, [
 				'header' => $resourceIndexHeaderTemplate,
 			]));
 		}
 	}
 
-	protected function getTable(TableType $type, string $header, string $entry, array $properties, $level = 0, bool $shouldResolveSchema = false)
+	protected function getTable(TableType $type, string $header, string $entry, array $properties, $level = 0, bool $shouldResolveSchema = false) : string
 	{
 		if ( empty($properties) ) {
 			return '';
@@ -168,7 +171,7 @@ class MarkdownGenerator
 		]);
 	}
 
-	protected function generateIndexResourceList(string $version, array $endpoints, $returnHtml = false) : string
+	protected function generateIndexResourceList(ApiVersion $version, array $endpoints, $returnHtml = false) : string
 	{
 		$entryTemplate = $this->getTemplate('resources-list-entry');
 		$html = '';
@@ -187,12 +190,14 @@ class MarkdownGenerator
 			]);
 		}
 
-		$html = $this->replaceTemplateVariables($this->getTemplate('resources-list'), [
+		$html = $this->replaceTemplateVariables($this->getTemplate($this->config['options']['generate_separate_resource_pages']  ? 'resources-index-list' : 'resources-list'), [
+			'api_name' => ucfirst($version->getDisplayName()),
+			'api_version' => $version->version,
 			'resource_list_entry' => $html,
 		]);
 
 		if ( !$returnHtml ) {
-			$this->saveFile($this->config['docs_dir'].'/src/'.$version.'/README.md', $html);
+			$this->saveFile($this->config['docs_dir'].'/src/'.$version->version.'/README.md', $html);
 		}
 
 		return $html;

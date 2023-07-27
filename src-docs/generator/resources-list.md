@@ -1,4 +1,4 @@
-# Resources
+# %api_name% Resources
 
 | Resource | Endpoint | Description |
 |----------|----------|-------------|

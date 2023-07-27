@@ -1,20 +1,20 @@
 {
     "kraken": {
-        "version": "1.0",
+        "version": "kraken",
         "prefix": "kraken",
-        "internalName": "kraken",
-        "url": "https:\/\/api.example.org\/"
+        "url": "https:\/\/api.example.org\/",
+        "displayName": "kraken"
     },
     "helix": {
-        "version": "2.0",
+        "version": "helix",
         "prefix": "helix",
-        "internalName": "helix",
-        "url": "https:\/\/api.example.org\/"
+        "url": "https:\/\/api.example.org\/",
+        "displayName": "helix"
     },
     "real-api": {
-        "version": "3.0",
+        "version": "real-api",
         "prefix": "v1",
-        "internalName": "real-api",
-        "url": "https:\/\/api.example.org\/"
+        "url": "https:\/\/api.example.org\/",
+        "displayName": "Real API Example"
     }
 }

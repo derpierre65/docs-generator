@@ -14,7 +14,7 @@ return [
 		__DIR__.'/src' => 'Derpierre65\\DocsGenerator\\Example',
 	],
 
-	'template_path' => __DIR__.'/src-docs/generator/',
+	'template_path' => __DIR__.'/../src-docs/generator/',
 
 	'options' => [
 		/**

@@ -30,11 +30,10 @@ trait CreateGenerator
 		return $generator;
 	}
 
-	public function assertApiVersionValues(ApiVersion $apiVersion, string $version, string $prefix, string $internalName = '', string $url = '') : void
+	public function assertApiVersionValues(ApiVersion $apiVersion, string $version, string $prefix, string $url = '') : void
 	{
 		$this->assertSame($apiVersion->version, $version);
 		$this->assertSame($apiVersion->prefix, $prefix);
-		$this->assertSame($apiVersion->internalName, $internalName);
 		$this->assertSame($apiVersion->url, $url);
 	}
 }

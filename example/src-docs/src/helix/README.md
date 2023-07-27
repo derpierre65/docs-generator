@@ -2,7 +2,7 @@
 sidebar: ['./README.md']
 sidebarDepth: 2
 ---
-# Resources
+# Helix Resources
 
 | Resource | Endpoint | Description |
 |----------|----------|-------------|
@@ -13,13 +13,13 @@ sidebarDepth: 2
 
 <docs-Endpoint>
 
-# User
+## User
 
 </docs-Endpoint>
 
 <docs-Endpoint>
 
-## Get Users
+### Get Users
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/helix/users" />
 
@@ -27,7 +27,7 @@ Get list of Users @index
 
 
 
-### Response Body
+#### Response Body
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -41,15 +41,15 @@ Get list of Users @index
 
 <docs-EndpointExample>
 
-### Code samples
+#### Example response
 
-```js
-// code example soon
+```json
+{}
 ```
 </docs-EndpointExample>
 </docs-Endpoint><docs-Endpoint>
 
-## Get Users
+### Get Users
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/helix/users" />
 
@@ -62,15 +62,15 @@ Get list of Users with social connections @index2
 
 <docs-EndpointExample>
 
-### Code samples
+#### Example response
 
-```js
-// code example soon
+```json
+{}
 ```
 </docs-EndpointExample>
 </docs-Endpoint><docs-Endpoint>
 
-## Get Users
+### Get Users
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/helix/users" />
 
@@ -83,10 +83,10 @@ Get list of Users
 
 <docs-EndpointExample>
 
-### Code samples
+#### Example response
 
-```js
-// code example soon
+```json
+{}
 ```
 </docs-EndpointExample>
 </docs-Endpoint>

@@ -1,6 +1,6 @@
 <docs-Endpoint>
 
-## %endpoint_title%
+### %endpoint_title%
 
 <docs-ApiUrl type="%endpoint_method%" endpoint="%endpoint_url%" />
 
@@ -13,10 +13,10 @@
 
 <docs-EndpointExample>
 
-### Code samples
+#### Example response
 
-```js
-// code example soon
+```json
+%response_example%
 ```
 </docs-EndpointExample>
 </docs-Endpoint>

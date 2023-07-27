@@ -2,7 +2,7 @@
 sidebar: ['./README.md']
 sidebarDepth: 2
 ---
-# Resources
+# Real API Example Resources
 
 | Resource | Endpoint | Description |
 |----------|----------|-------------|
@@ -12,13 +12,13 @@ sidebarDepth: 2
 
 <docs-Endpoint>
 
-# User
+## User
 
 </docs-Endpoint>
 
 <docs-Endpoint>
 
-## Get Users
+### Get Users
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/v1/users" />
 
@@ -26,7 +26,7 @@ Gets a list of all users.
 
 
 
-### Response Body
+#### Response Body
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -44,15 +44,15 @@ Gets a list of all users.
 
 <docs-EndpointExample>
 
-### Code samples
+#### Example response
 
-```js
-// code example soon
+```json
+{}
 ```
 </docs-EndpointExample>
 </docs-Endpoint><docs-Endpoint>
 
-## Update user
+### Update user
 
 <docs-ApiUrl type="PATCH" endpoint="https://api.example.org/v1/users/{user}" />
 
@@ -60,7 +60,7 @@ Updates the user’s information.
 
 
 
-### Response Body
+#### Response Body
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -70,10 +70,10 @@ Updates the user’s information.
 
 <docs-EndpointExample>
 
-### Code samples
+#### Example response
 
-```js
-// code example soon
+```json
+{}
 ```
 </docs-EndpointExample>
 </docs-Endpoint>

@@ -24,7 +24,7 @@ class ApiVersionTest extends TestCase
 		$this->assertEmpty($generator->getEndpoints());
 		$this->assertEmpty($generator->getSchemes());
 
-		$this->assertApiVersionValues($apiVersions['my-api'], '1.0', 'v1', 'my-api', 'https://api.example.org/');
+		$this->assertApiVersionValues($apiVersions['my-api'], 'my-api', 'v1', 'https://api.example.org/');
 	}
 
 	public function testMultipleApiVersions()
@@ -41,9 +41,9 @@ class ApiVersionTest extends TestCase
 		$this->assertEmpty($generator->getEndpoints());
 		$this->assertEmpty($generator->getSchemes());
 
-		$this->assertApiVersionValues($apiVersions['my-api'], '1.0', 'v1', 'my-api', 'https://api.example.org/');
-		$this->assertApiVersionValues($apiVersions['my-second-api'], '2.0', 'v2', 'my-second-api', 'https://api.example.org/');
-		$this->assertApiVersionValues($apiVersions['my-third-api'], '3.0', 'v3', 'my-third-api', 'https://api.example.org/');
+		$this->assertApiVersionValues($apiVersions['my-api'], 'my-api', 'v1', 'https://api.example.org/');
+		$this->assertApiVersionValues($apiVersions['my-second-api'], 'my-second-api', 'v2', 'https://api.example.org/');
+		$this->assertApiVersionValues($apiVersions['my-third-api'], 'my-third-api', 'v3', 'https://api.example.org/');
 	}
 
 	public function testSingleApiVersionJson()
@@ -67,8 +67,8 @@ class ApiVersionTest extends TestCase
 		$this->assertCount(count($generator->getApiVersions()), $json);
 
 		foreach ( $generator->getApiVersions() as $apiVersion ) {
-			$this->assertArrayHasKey($apiVersion->internalName, $json);
-			$this->assertSame($json[$apiVersion->internalName], $apiVersion->toArray());
+			$this->assertArrayHasKey($apiVersion->version, $json);
+			$this->assertSame($json[$apiVersion->version], $apiVersion->toArray());
 		}
 	}
 
@@ -93,8 +93,8 @@ class ApiVersionTest extends TestCase
 		$this->assertCount(count($generator->getApiVersions()), $json);
 
 		foreach ( $generator->getApiVersions() as $apiVersion ) {
-			$this->assertArrayHasKey($apiVersion->internalName, $json);
-			$this->assertSame($json[$apiVersion->internalName], $apiVersion->toArray());
+			$this->assertArrayHasKey($apiVersion->version, $json);
+			$this->assertSame($json[$apiVersion->version], $apiVersion->toArray());
 		}
 	}
 }

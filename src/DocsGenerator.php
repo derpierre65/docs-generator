@@ -79,7 +79,7 @@ class DocsGenerator
 			foreach ( $reflectionClass->getAttributes(ApiVersion::class) as $_ => $versionAttribute ) {
 				/** @var ApiVersion $version */
 				$version = $versionAttribute->newInstance();
-				$this->apiVersions[$version->internalName ?? $version->version] = $version;
+				$this->apiVersions[$version->version] = $version;
 			}
 
 			// looking for schema

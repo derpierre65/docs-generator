@@ -2,7 +2,7 @@
 
 <docs-Endpoint>
 
-# %resource_name%
+## %resource_name%
 
 </docs-Endpoint>
 
