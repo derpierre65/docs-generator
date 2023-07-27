@@ -15,16 +15,18 @@ trait CreateGenerator
 	{
 		$docsPath = __DIR__.'/src-docs';
 		$config = [
-			'docs_dir' => $docsPath,
 			'scan_directories' => [
 				__DIR__.'/Examples/'.$testCase => 'Derpierre65\DocsGenerator\Tests\Examples\\'.$testCase,
 			],
-			'template_path' => $docsPath.'/generator',
+			'paths' => [
+				'docs' => $docsPath,
+				'template' => $docsPath.'/generator',
+			],
 		];
 
 		$generator = new DocsGenerator($config);
-		if ( !file_exists($config['docs_dir']) ) {
-			mkdir($config['docs_dir']);
+		if ( !file_exists($config['paths']['docs']) ) {
+			mkdir($config['paths']['docs']);
 		}
 
 		return $generator;

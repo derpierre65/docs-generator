@@ -33,7 +33,7 @@ class GenerateCommand extends Command
 
 		$config = require_once($configPath);
 
-		foreach ( ['docs_dir', 'scan_directories'] as $key ) {
+		foreach ( ['paths', 'scan_directories'] as $key ) {
 			if ( !array_key_exists($key, $config) ) {
 				$this->cli->error('Config key {key} not found.', ['key' => $key]);
 

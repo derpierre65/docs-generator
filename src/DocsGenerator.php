@@ -219,7 +219,7 @@ class DocsGenerator
 	public function generateApiJson() : static
 	{
 		$jsonContent = json_encode(array_map(fn(ApiVersion $version) => $version->toArray(), $this->getApiVersions()), JSON_PRETTY_PRINT);
-		if ( !file_exists($this->config['docs_dir']) ) {
+		if ( !file_exists($this->config['paths']['docs']) ) {
 			$this->log('error', 'src-docs directory doesn\'t exist.');
 
 			return $this;
@@ -286,7 +286,7 @@ class DocsGenerator
 	//<editor-fold desc="getters">
 	public function getApiJsonDirectory() : string
 	{
-		return $this->config['docs_dir'].'/src/.vuepress/api.json';
+		return $this->config['paths']['docs'].'/src/.vuepress/api.json';
 	}
 
 	public function getEndpoints() : array

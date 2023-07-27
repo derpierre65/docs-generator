@@ -18,6 +18,10 @@ class MarkdownGenerator
 	public function generateResourcesList() : static
 	{
 		foreach ( $this->generator->getEndpoints() as $version => $endpoints ) {
+			if ( $this->config['options']['clear_directory_before_generate'] ) {
+				$this->rmdir($this->config['paths']['docs'].'/src/'.$version);
+			}
+
 			$apiVersion = $this->generator->getApiVersions()[$version];
 			if ( $this->config['options']['generate_separate_resource_pages'] ) {
 				$this->generateIndexResourceList($apiVersion, $endpoints);
@@ -33,7 +37,6 @@ class MarkdownGenerator
 		$html = $resources = [];
 		$endpointTemplate = $this->getTemplate('endpoint');
 		$indexTemplate = $this->getTemplate('resource-index');
-		$resourceIndexHeaderTemplate = $this->getTemplate('resource-header');
 		$responseEntryTemplate = $this->getTemplate('endpoint-response-entry');
 		$responseIndexTemplate = $this->getTemplate('endpoint-response-index');
 
@@ -69,11 +72,13 @@ class MarkdownGenerator
 		}
 
 		if ( $this->config['options']['generate_separate_resource_pages'] ) {
+			$header = $this->getTemplate('resource-header-single');
+
 			foreach ( $resources as $resourceName => $resource ) {
 				$this->saveFile(
-					$this->config['docs_dir'].'/src/'.$version->version.'/'.$resource->getPathURL().'/README.md',
+					$this->config['paths']['docs'].'/src/'.$version->version.'/'.$resource->getPathURL().'/README.md',
 					$this->replaceTemplateVariables($indexTemplate, [
-						'header' => $resourceIndexHeaderTemplate,
+						'header' => $header,
 						'resource_name' => $resourceName,
 						'endpoints' => $html[$resource->name],
 					])
@@ -82,7 +87,7 @@ class MarkdownGenerator
 		}
 		else {
 			$indexHtml = '';
-			$header = $resourceIndexHeaderTemplate;
+			$header = $this->getTemplate('resource-header');
 
 			if ( $this->config['options']['append_resources_table_in_single_page'] ) {
 				$header .= $this->generateIndexResourceList($version, $endpoints, true);
@@ -98,8 +103,8 @@ class MarkdownGenerator
 				$header = '';
 			}
 
-			$this->saveFile($this->config['docs_dir'].'/src/'.$version->version.'/README.md', $this->replaceTemplateVariables($indexHtml, [
-				'header' => $resourceIndexHeaderTemplate,
+			$this->saveFile($this->config['paths']['docs'].'/src/'.$version->version.'/README.md', $this->replaceTemplateVariables($indexHtml, [
+				'header' => '',
 			]));
 		}
 	}
@@ -165,8 +170,8 @@ class MarkdownGenerator
 			// using &nbsp; to force spaces
 			'name' => str_repeat('&nbsp;&nbsp;&nbsp;', $level).$property->fieldName,
 			'type' => ucfirst($useSchemaName && $property->example instanceof Schema ? $property->example->name : $property->type->value).($property->isArray ? '[]' : ''),
-			'description' => $property->description ?: $this->config['defaults']['property_'.$type->value.'_description'],
-			'example' => is_object($property->example) || is_array($property->example) ? '' : $property->example,
+			'description' => $property->description ? : $this->config['defaults']['property_'.$type->value.'_description'],
+			'example' => is_scalar($property->example) ? $property->example : '',
 			'required' => false,
 		]);
 	}
@@ -190,14 +195,14 @@ class MarkdownGenerator
 			]);
 		}
 
-		$html = $this->replaceTemplateVariables($this->getTemplate($this->config['options']['generate_separate_resource_pages']  ? 'resources-index-list' : 'resources-list'), [
+		$html = $this->replaceTemplateVariables($this->getTemplate($this->config['options']['generate_separate_resource_pages'] ? 'resources-index-list' : 'resources-list'), [
 			'api_name' => ucfirst($version->getDisplayName()),
 			'api_version' => $version->version,
 			'resource_list_entry' => $html,
 		]);
 
 		if ( !$returnHtml ) {
-			$this->saveFile($this->config['docs_dir'].'/src/'.$version->version.'/README.md', $html);
+			$this->saveFile($this->config['paths']['docs'].'/src/'.$version->version.'/README.md', $html);
 		}
 
 		return $html;
@@ -224,6 +229,15 @@ class MarkdownGenerator
 
 	protected function getTemplate(string $template) : string
 	{
-		return file_get_contents($this->config['template_path'].$template.'.md') ?? '';
+		return file_get_contents($this->config['paths']['template'].$template.'.md') ?? '';
+	}
+
+	protected function rmdir(string $path) : void
+	{
+		foreach ( glob($path.'/*') as $file ) {
+			is_dir($file) ? $this->rmdir($file) : @unlink($file);
+		}
+
+		rmdir($path);
 	}
 }
