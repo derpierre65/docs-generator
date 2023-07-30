@@ -19,10 +19,16 @@ trait Files
 
 	protected function rmdir(string $path) : void
 	{
+		if ( !file_exists($path) ) {
+			return;
+		}
+
 		foreach ( glob($path.'/*') as $file ) {
 			is_dir($file) ? $this->rmdir($file) : @unlink($file);
 		}
 
-		rmdir($path);
+		if ( file_exists($path) ) {
+			rmdir($path);
+		}
 	}
 }

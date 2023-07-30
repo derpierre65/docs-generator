@@ -80,7 +80,7 @@ class MarkdownGenerator
 					$this->config['options']['resolve_schema_in_response']
 				),
 				'response_codes' => '', // TODO
-				'response_example' => json_encode(new \stdClass(), JSON_PRETTY_PRINT), // TODO
+				'response_example' => json_encode($this->buildResponseExample($endpoint->getProperties()), JSON_PRETTY_PRINT), // TODO
 			]), [
 				'endpoint_header_level' => $data['endpointHeaderLevel'],
 				'endpoint_sub_header_level' => $data['endpointSubHeaderLevel'],
@@ -152,17 +152,7 @@ class MarkdownGenerator
 				$html .= $this->renderColumnProperty($type, $entry, $property, $level, !$shouldResolveSchema);
 
 				if ( $shouldResolveSchema ) {
-					$schema = $property->example;
-
-					// get the global schema
-					$newSchema = $this->generator->getSchemes()[$schema->name];
-
-					// merge schema and global schema withoutFields
-					$ignoreFields = array_unique(array_merge($schema->withoutFields, $newSchema->withoutFields));
-
-					// filter out any unwanted field
-					$properties = array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $ignoreFields));
-
+					$properties = $this->getSchemaProperties($property->example);
 					$html .= $this->getTable($type, '', $entry, $properties, $level + 1);
 				}
 			}
@@ -234,5 +224,65 @@ class MarkdownGenerator
 		}
 
 		return $html;
+	}
+
+	protected function getSchemaProperties(Schema $schema)
+	{
+		// get the global schema
+		$newSchema = $this->generator->getSchemes()[$schema->name];
+
+		// merge schema and global schema withoutFields
+		$ignoreFields = array_unique(array_merge($schema->withoutFields, $newSchema->withoutFields));
+
+		// filter out any unwanted field
+		return array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $ignoreFields));
+	}
+
+	protected function buildResponseExample(array $response) : array
+	{
+		$responseObject = [];
+		/** @var Property $property */
+		foreach ( $response as $property ) {
+			if ( $property->example instanceof Schema ) {
+				$this->appendToArray(
+					$responseObject,
+					$property->fieldName,
+					$this->buildResponseExample($this->getSchemaProperties($property->example)),
+					$property->isArray,
+				);
+			}
+			elseif ( is_array($property->example) ) {
+				$renderProperties = array_filter($property->example, fn(Property $subProperty) => $subProperty instanceof Property);
+
+				if ( !empty($renderProperties) ) {
+					$this->appendToArray(
+						$responseObject,
+						$property->fieldName,
+						$this->buildResponseExample($renderProperties),
+						$property->isArray,
+					);
+				}
+			}
+			else {
+				$this->appendToArray(
+					$responseObject,
+					$property->fieldName,
+					$property->example,
+					$property->isArray,
+				);
+			}
+		}
+
+		return $responseObject;
+	}
+
+	protected function appendToArray(array &$object, string $key, mixed $value, bool $asArray) : void
+	{
+		if ( $asArray ) {
+			$object[$key][] = $value;
+		}
+		else {
+			$object[$key] = $value;
+		}
 	}
 }

@@ -37,6 +37,7 @@ class TestController extends Controller
 	#[RequireAnyTokenType([TokenType::CLIENT_ACCESS_TOKEN, TokenType::USER_ACCESS_TOKEN])]
 	#[RequireScope(ScopeEnum::MY_TEST_SCOPE)] // required for both routes
 	#[RequireScope(Scope::MY_SECOND_TEST_SCOPE, operationId: 'helix-users-index-2')] // only required for 'helix-users-index-2' route
+	#[Property('data', PropertyType::ARRAY, new Schema('Test'))]
 	public function index2() {}
 
 	#[Summary('Get Users', 'Get list of Users')]

@@ -41,7 +41,13 @@ Get list of Users @index
 #### Example response
 
 ```json
-{}
+{
+    "id": 42,
+    "username": "derpierre65",
+    "email": "hello@derpierre65.dev",
+    "overlay_token": "pu72I3Vkz7iAJegTpzp28ctTWsm",
+    "created_at": "2022-01-01T00:00:00Z"
+}
 ```
 
 </docs-EndpointExample>
@@ -54,12 +60,28 @@ Get list of Users @index
 
 Get list of Users @index2
 
+#### Response Body
+
+| Field | Type | Description |
+|-------|------|-------------|
+| data | Test[] | No description |
+
 <docs-EndpointExample>
 
 #### Example response
 
 ```json
-{}
+{
+    "data": [
+        {
+            "id": 42,
+            "username": "derpierre65",
+            "email": "hello@derpierre65.dev",
+            "overlay_token": "pu72I3Vkz7iAJegTpzp28ctTWsm",
+            "created_at": "2022-01-01T00:00:00Z"
+        }
+    ]
+}
 ```
 
 </docs-EndpointExample>
@@ -87,7 +109,17 @@ Get list of Users
 #### Example response
 
 ```json
-{}
+{
+    "a": {
+        "b": {
+            "c": {
+                "d": {
+                    "enabled": true
+                }
+            }
+        }
+    }
+}
 ```
 
 </docs-EndpointExample>
@@ -129,7 +161,30 @@ Hihi not a user resource in my user controller
 #### Example response
 
 ```json
-{}
+{
+    "id": 42,
+    "username": "derpierre65",
+    "email": "hello@derpierre65.dev",
+    "overlay_token": "pu72I3Vkz7iAJegTpzp28ctTWsm",
+    "created_at": "2022-01-01T00:00:00Z",
+    "just_an_object": {
+        "datetime": "2022-01-01T00:00:00Z",
+        "my_string": "hello world"
+    },
+    "nested_object_array": [
+        {
+            "datetime": "2022-01-01T00:00:00Z",
+            "my_string": "hello world"
+        }
+    ],
+    "test": {
+        "id": 42,
+        "username": "derpierre65",
+        "email": "hello@derpierre65.dev",
+        "overlay_token": "pu72I3Vkz7iAJegTpzp28ctTWsm",
+        "created_at": "2022-01-01T00:00:00Z"
+    }
+}
 ```
 
 </docs-EndpointExample>

@@ -28,22 +28,41 @@ Gets a list of all users.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | Integer | No description |
-| username | String | No description |
-| slug | String | No description |
-| email | String | No description |
-| overlay_token | String | No description |
-| avatar | String | No description |
-| acting_as | User | No description |
-| scopes | String[] | No description |
-| created_at | Datetime | No description |
+| data | User[] | No description |
 
 <docs-EndpointExample>
 
 #### Example response
 
 ```json
-{}
+{
+    "data": [
+        {
+            "id": 42,
+            "username": "hello world",
+            "slug": "hello world",
+            "email": "hello world",
+            "overlay_token": "hello world",
+            "avatar": "hello world",
+            "acting_as": {
+                "id": 42,
+                "username": "hello world",
+                "slug": "hello world",
+                "email": "hello world",
+                "overlay_token": "hello world",
+                "avatar": "hello world",
+                "scopes": [
+                    "hello world"
+                ],
+                "created_at": "2022-01-01T00:00:00Z"
+            },
+            "scopes": [
+                "hello world"
+            ],
+            "created_at": "2022-01-01T00:00:00Z"
+        }
+    ]
+}
 ```
 
 </docs-EndpointExample>
@@ -60,14 +79,45 @@ Updates the user’s information.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| data | User | No description |
+| id | Integer | No description |
+| username | String | No description |
+| slug | String | No description |
+| email | String | No description |
+| overlay_token | String | No description |
+| avatar | String | No description |
+| acting_as | User | No description |
+| scopes | String[] | No description |
+| created_at | Datetime | No description |
 
 <docs-EndpointExample>
 
 #### Example response
 
 ```json
-{}
+{
+    "id": 42,
+    "username": "hello world",
+    "slug": "hello world",
+    "email": "hello world",
+    "overlay_token": "hello world",
+    "avatar": "hello world",
+    "acting_as": {
+        "id": 42,
+        "username": "hello world",
+        "slug": "hello world",
+        "email": "hello world",
+        "overlay_token": "hello world",
+        "avatar": "hello world",
+        "scopes": [
+            "hello world"
+        ],
+        "created_at": "2022-01-01T00:00:00Z"
+    },
+    "scopes": [
+        "hello world"
+    ],
+    "created_at": "2022-01-01T00:00:00Z"
+}
 ```
 
 </docs-EndpointExample>

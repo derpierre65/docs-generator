@@ -16,7 +16,7 @@ class RealApiUserController
 {
 	#[Endpoint(EndpointMethod::GET, 'real-api', 'users')]
 	#[Summary('Get Users', 'Gets a list of all users.')]
-	#[Response(new Schema('User'))]
+	#[Property('data', PropertyType::ARRAY, new Schema('User'))]
 	public function index()
 	{
 		// here my index stuff
@@ -24,7 +24,7 @@ class RealApiUserController
 
 	#[Endpoint(EndpointMethod::PATCH, 'real-api', 'users/{user}')]
 	#[Summary('Update user', 'Updates the user’s information.')]
-	#[Property('data', PropertyType::SCHEMA, new Schema('User', withoutFields: ['avatar']))]
+	#[Response(new Schema('User', withoutFields: ['avatar']))]
 	public function store() {
 
 	}

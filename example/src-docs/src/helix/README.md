@@ -40,7 +40,13 @@ Get list of Users @index
 #### Example response
 
 ```json
-{}
+{
+    "id": 42,
+    "username": "derpierre65",
+    "email": "hello@derpierre65.dev",
+    "overlay_token": "pu72I3Vkz7iAJegTpzp28ctTWsm",
+    "created_at": "2022-01-01T00:00:00Z"
+}
 ```
 
 </docs-EndpointExample>
@@ -53,12 +59,28 @@ Get list of Users @index
 
 Get list of Users with social connections @index2
 
+#### Response Body
+
+| Field | Type | Description |
+|-------|------|-------------|
+| data | Test[] | No description |
+
 <docs-EndpointExample>
 
 #### Example response
 
 ```json
-{}
+{
+    "data": [
+        {
+            "id": 42,
+            "username": "derpierre65",
+            "email": "hello@derpierre65.dev",
+            "overlay_token": "pu72I3Vkz7iAJegTpzp28ctTWsm",
+            "created_at": "2022-01-01T00:00:00Z"
+        }
+    ]
+}
 ```
 
 </docs-EndpointExample>
@@ -76,7 +98,7 @@ Get list of Users
 #### Example response
 
 ```json
-{}
+[]
 ```
 
 </docs-EndpointExample>

@@ -16,15 +16,14 @@ export default defineUserConfig({
 	description: 'Docs Generator Example',
 
 	theme: defaultTheme({
-		// lastUpdated: true,
-		// editLink: true,
-		// editLinkText: 'Edit me',
-		// repo: 'derpierre65/docs-generator',
-		// editLinkPattern: ':repo/edit/:branch/:path',
+		editLink: true,
+		editLinkText: 'Edit me',
+		repo: 'derpierre65/docs-generator',
+		editLinkPattern: ':repo/edit/:branch/example/src-docs/src/:path',
 		navbar: [
 			{text: 'Kraken', link: '/kraken/'},
 			{text: 'Helix', link: '/helix/'},
-			{text: 'Real API', link: '/real-api/'},
+			{text: 'Real API Example', link: '/real-api/'},
 		],
 		sidebar: {
 			/*'/resources/my-api-version': [
