@@ -12,6 +12,8 @@ use Derpierre65\DocsGenerator\Attributes\Response;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\Attributes\Summary;
 use Derpierre65\DocsGenerator\Generator\MarkdownGenerator;
+use Derpierre65\DocsGenerator\Generator\Plugin\PluginManager;
+use Derpierre65\DocsGenerator\Generator\Traits\Helpers;
 use Derpierre65\DocsGenerator\Helpers\RequireScope;
 use ReflectionClass;
 use SplFileInfo;
@@ -19,6 +21,8 @@ use Symfony\Component\Finder\Finder;
 
 class DocsGenerator
 {
+	use Helpers;
+
 	protected array $scanDirectories = [];
 
 	protected array $endpoints = [];
@@ -30,6 +34,8 @@ class DocsGenerator
 
 	protected array $config;
 
+	protected PluginManager $pluginManager;
+
 	public function __construct($config)
 	{
 		$this->config = $config;
@@ -38,10 +44,18 @@ class DocsGenerator
 		foreach ( $config['scan_directories'] as $directory => $namespace ) {
 			$this->scanDirectories[$this->normalizeDir($directory)] = $this->normalizeNamespace($namespace);
 		}
+
+		// initialize plugins
+		$this->pluginManager = new PluginManager();
+		foreach ( $this->config['plugins'] as $pluginClass ) {
+			$this->pluginManager->registerPlugin(new $pluginClass());
+		}
 	}
 
 	public function generate() : void
 	{
+		$this->pluginManager->fireAction(self::class, 'beforeGenerate');
+
 		$this
 			->fetch()
 			->generateApiJson()
@@ -50,6 +64,8 @@ class DocsGenerator
 
 	public function fetch() : static
 	{
+		$this->pluginManager->fireAction(self::class, 'beforeFetchFiles');
+
 		$files = $this->getFiles($directories = array_keys($this->scanDirectories));
 		$files = array_map(function (SplFileInfo $fileInfo) use ($directories) : ?string {
 			foreach ( $directories as $directory ) {
@@ -64,6 +80,10 @@ class DocsGenerator
 
 			return null;
 		}, $files);
+
+		$data = ['files' => $files];
+		$this->pluginManager->fireAction(self::class, 'afterFetchFiles', $data);
+		$files = $data['files'];
 
 		$this->endpoints = $this->apiVersions = $this->schemes = [];
 
@@ -258,16 +278,6 @@ class DocsGenerator
 		}
 
 		return $group;
-	}
-
-	protected function normalizeDir(string $dir) : array|string
-	{
-		return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $dir);
-	}
-
-	protected function normalizeNamespace(string $namespace) : string
-	{
-		return rtrim($namespace, '\\');
 	}
 
 	protected function log(string $type, string $message) : void

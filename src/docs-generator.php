@@ -44,4 +44,8 @@ return [
 		'property_query_description' => 'No description',
 		'property_body_description' => 'No description',
 	],
+
+	'plugins' => [
+		// insert your plugin here (MyPlugin::class)
+	],
 ];

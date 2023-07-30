@@ -8,9 +8,14 @@ use Derpierre65\DocsGenerator\Attributes\Property;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\DocsGenerator;
 use Derpierre65\DocsGenerator\Enums\Generator\TableType;
+use Derpierre65\DocsGenerator\Generator\Traits\Files;
+use Derpierre65\DocsGenerator\Generator\Traits\TemplateSystem;
 
 class MarkdownGenerator
 {
+	use Files;
+	use TemplateSystem;
+
 	public function __construct(protected DocsGenerator $generator, protected array $config)
 	{
 	}
@@ -206,38 +211,5 @@ class MarkdownGenerator
 		}
 
 		return $html;
-	}
-
-	protected function replaceTemplateVariables(string $template, array $variables) : string
-	{
-		$formattedVariables = [];
-		foreach ( $variables as $key => $value ) {
-			$formattedVariables['%'.$key.'%'] = $value;
-		}
-
-		return str_replace(array_keys($formattedVariables), array_values($formattedVariables), $template);
-	}
-
-	protected function saveFile(string $filename, string $html) : void
-	{
-		if ( !file_exists($dir = dirname($filename)) ) {
-			mkdir($dir, recursive: true);
-		}
-
-		file_put_contents($filename, $html);
-	}
-
-	protected function getTemplate(string $template) : string
-	{
-		return file_get_contents($this->config['paths']['template'].$template.'.md') ?? '';
-	}
-
-	protected function rmdir(string $path) : void
-	{
-		foreach ( glob($path.'/*') as $file ) {
-			is_dir($file) ? $this->rmdir($file) : @unlink($file);
-		}
-
-		rmdir($path);
 	}
 }
