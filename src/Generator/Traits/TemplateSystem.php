@@ -18,4 +18,18 @@ trait TemplateSystem
 	{
 		return file_get_contents($this->config['paths']['template'].$template.'.md') ?? '';
 	}
+
+	protected function buildSiteConfig(array $config) : string
+	{
+		if ( empty($config) ) {
+			return '';
+		}
+
+		$html = "---\n";
+		foreach ( $config as $key => $value ) {
+			$html .= $key.': '.json_encode($value)."\n";
+		}
+
+		return $html . "---\n";
+	}
 }

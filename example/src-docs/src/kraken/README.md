@@ -1,7 +1,8 @@
 ---
-sidebar: ['./README.md']
+sidebar: [".\/README.md"]
 sidebarDepth: 2
 ---
+
 # Kraken Resources
 
 | Resource | Endpoint | Description |
@@ -10,7 +11,6 @@ sidebarDepth: 2
 | User | [Get Users](.//README.md#get-users-1) | Get list of Users @index2 |
 | User | [Get Users](.//README.md#get-users-2) | Get list of Users |
 | My Test | [Get Test](.//README.md#get-test) | Hihi not a user resource in my user controller |
-
 
 <docs-Endpoint>
 
@@ -26,8 +26,6 @@ sidebarDepth: 2
 
 Get list of Users @index
 
-
-
 #### Response Body
 
 | Field | Type | Description |
@@ -38,8 +36,6 @@ Get list of Users @index
 | overlay_token | String | No description |
 | created_at | Datetime | No description |
 
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -47,8 +43,10 @@ Get list of Users @index
 ```json
 {}
 ```
+
 </docs-EndpointExample>
-</docs-Endpoint><docs-Endpoint>
+</docs-Endpoint>
+<docs-Endpoint>
 
 ### Get Users
 
@@ -56,11 +54,6 @@ Get list of Users @index
 
 Get list of Users @index2
 
-
-
-
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -68,16 +61,16 @@ Get list of Users @index2
 ```json
 {}
 ```
+
 </docs-EndpointExample>
-</docs-Endpoint><docs-Endpoint>
+</docs-Endpoint>
+<docs-Endpoint>
 
 ### Get Users
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/kraken/users" />
 
 Get list of Users
-
-
 
 #### Response Body
 
@@ -89,8 +82,6 @@ Get list of Users
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d | Object | No description |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enabled | Boolean | No description |
 
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -98,6 +89,7 @@ Get list of Users
 ```json
 {}
 ```
+
 </docs-EndpointExample>
 </docs-Endpoint>
 
@@ -114,8 +106,6 @@ Get list of Users
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/kraken/not-an-user" />
 
 Hihi not a user resource in my user controller
-
-
 
 #### Response Body
 
@@ -134,8 +124,6 @@ Hihi not a user resource in my user controller
 | &nbsp;&nbsp;&nbsp;my_string | String | No description |
 | test | Test2 | No description |
 
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -143,5 +131,6 @@ Hihi not a user resource in my user controller
 ```json
 {}
 ```
+
 </docs-EndpointExample>
 </docs-Endpoint>

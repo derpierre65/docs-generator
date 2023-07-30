@@ -40,10 +40,18 @@ class MarkdownGenerator
 	protected function generateResourceIndex(ApiVersion $version, array $endpoints) : void
 	{
 		$html = $resources = [];
-		$endpointTemplate = $this->getTemplate('endpoint');
-		$indexTemplate = $this->getTemplate('resource-index');
-		$responseEntryTemplate = $this->getTemplate('endpoint-response-entry');
-		$responseIndexTemplate = $this->getTemplate('endpoint-response-index');
+
+		$data = [
+			'endpointTemplate' => $this->getTemplate('endpoint'),
+			'indexTemplate' => $this->getTemplate('resource-index'),
+			'responseEntryTemplate' => $this->getTemplate('endpoint-response-entry'),
+			'responseIndexTemplate' => $this->getTemplate('endpoint-response-index'),
+			'endpointHeaderLevel' => str_repeat('#', $this->config['options']['generate_separate_resource_pages'] ? 2 : 3),
+			'endpointSubHeaderLevel' => str_repeat('#', $this->config['options']['generate_separate_resource_pages'] ? 3 : 4),
+			'resourceHeaderLevel' => str_repeat('#', $this->config['options']['generate_separate_resource_pages'] ? 1 : 2),
+		];
+
+		// $this->pluginManager->fireAction(self::class, 'beforeGenerateResourceIndex', $data);
 
 		/** @var Endpoint $endpoint */
 		foreach ( $endpoints as $index => $endpoint ) {
@@ -55,7 +63,7 @@ class MarkdownGenerator
 				$resources[$resource->name] = $resource;
 			}
 
-			$html[$resource->name] .= $this->replaceTemplateVariables($endpointTemplate, [
+			$html[$resource->name] .= $this->replaceTemplateVariables($this->replaceTemplateVariables($data['endpointTemplate'], [
 				'endpoint_title' => $summary->title,
 				'endpoint_summary' => $summary->summary,
 				'endpoint_method' => $endpoint->method->value,
@@ -65,26 +73,36 @@ class MarkdownGenerator
 				'body_parameters' => '', // TODO
 				'response_body' => $this->getTable(
 					TableType::RESPONSE,
-					$responseIndexTemplate,
-					$responseEntryTemplate,
+					$data['responseIndexTemplate'],
+					$data['responseEntryTemplate'],
 					$endpoint->getProperties(),
 					0,
 					$this->config['options']['resolve_schema_in_response']
 				),
 				'response_codes' => '', // TODO
-				'response_example' => json_encode(new \stdClass(), JSON_PRETTY_PRINT),
+				'response_example' => json_encode(new \stdClass(), JSON_PRETTY_PRINT), // TODO
+			]), [
+				'endpoint_header_level' => $data['endpointHeaderLevel'],
+				'endpoint_sub_header_level' => $data['endpointSubHeaderLevel'],
 			]);
 		}
 
-		if ( $this->config['options']['generate_separate_resource_pages'] ) {
-			$header = $this->getTemplate('resource-header-single');
+		$siteConfig = [
+			'sidebar' => ['./README.md'],
+			'sidebarDepth' => $this->config['options']['generate_separate_resource_pages'] ? 1 : 2,
+		];
 
+		$header = '';
+		if ( $this->config['options']['generate_separate_resource_pages'] ) {
 			foreach ( $resources as $resourceName => $resource ) {
+				$siteConfig['title'] = $resourceName;
+
 				$this->saveFile(
 					$this->config['paths']['docs'].'/src/'.$version->version.'/'.$resource->getPathURL().'/README.md',
-					$this->replaceTemplateVariables($indexTemplate, [
-						'header' => $header,
+					$this->replaceTemplateVariables($data['indexTemplate'], [
+						'site_config' => $this->buildSiteConfig($siteConfig),
 						'resource_name' => $resourceName,
+						'resource_header_level' => $data['resourceHeaderLevel'],
 						'endpoints' => $html[$resource->name],
 					])
 				);
@@ -92,20 +110,25 @@ class MarkdownGenerator
 		}
 		else {
 			$indexHtml = '';
-			$header = $this->getTemplate('resource-header');
-
 			if ( $this->config['options']['append_resources_table_in_single_page'] ) {
 				$header .= $this->generateIndexResourceList($version, $endpoints, true);
 			}
+			else {
+				$siteConfig['title'] = ucfirst($version->getDisplayName());
+			}
+
+			$siteConfigYml = $this->buildSiteConfig($siteConfig);
 
 			foreach ( $resources as $resourceName => $resource ) {
-				$indexHtml .= $this->replaceTemplateVariables($indexTemplate, [
+				$indexHtml .= $this->replaceTemplateVariables($data['indexTemplate'], [
+					'site_config' => $siteConfigYml,
 					'header' => $header,
 					'resource_name' => $resourceName,
+					'resource_header_level' => $data['resourceHeaderLevel'],
 					'endpoints' => $html[$resource->name],
 				]);
 
-				$header = '';
+				$header = $siteConfigYml = ''; // reset header and config yml
 			}
 
 			$this->saveFile($this->config['paths']['docs'].'/src/'.$version->version.'/README.md', $this->replaceTemplateVariables($indexHtml, [
@@ -132,7 +155,7 @@ class MarkdownGenerator
 					$schema = $property->example;
 
 					// get the global schema
-					$newSchema = ($this->generator->getSchemes()[$schema->name]); // TODO i dont know if i need to clone the original schema here, currently it works without clone
+					$newSchema = $this->generator->getSchemes()[$schema->name];
 
 					// merge schema and global schema withoutFields
 					$ignoreFields = array_unique(array_merge($schema->withoutFields, $newSchema->withoutFields));

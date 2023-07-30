@@ -1,7 +1,8 @@
 ---
-sidebar: ['./README.md']
+sidebar: [".\/README.md"]
 sidebarDepth: 2
 ---
+
 # Helix Resources
 
 | Resource | Endpoint | Description |
@@ -9,7 +10,6 @@ sidebarDepth: 2
 | User | [Get Users](.//README.md#get-users) | Get list of Users @index |
 | User | [Get Users](.//README.md#get-users-1) | Get list of Users with social connections @index2 |
 | User | [Get Users](.//README.md#get-users-2) | Get list of Users |
-
 
 <docs-Endpoint>
 
@@ -25,8 +25,6 @@ sidebarDepth: 2
 
 Get list of Users @index
 
-
-
 #### Response Body
 
 | Field | Type | Description |
@@ -37,8 +35,6 @@ Get list of Users @index
 | overlay_token | String | No description |
 | created_at | Datetime | No description |
 
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -46,8 +42,10 @@ Get list of Users @index
 ```json
 {}
 ```
+
 </docs-EndpointExample>
-</docs-Endpoint><docs-Endpoint>
+</docs-Endpoint>
+<docs-Endpoint>
 
 ### Get Users
 
@@ -55,11 +53,6 @@ Get list of Users @index
 
 Get list of Users with social connections @index2
 
-
-
-
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -67,8 +60,10 @@ Get list of Users with social connections @index2
 ```json
 {}
 ```
+
 </docs-EndpointExample>
-</docs-Endpoint><docs-Endpoint>
+</docs-Endpoint>
+<docs-Endpoint>
 
 ### Get Users
 
@@ -76,11 +71,6 @@ Get list of Users with social connections @index2
 
 Get list of Users
 
-
-
-
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -88,5 +78,6 @@ Get list of Users
 ```json
 {}
 ```
+
 </docs-EndpointExample>
 </docs-Endpoint>

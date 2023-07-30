@@ -1,6 +1,6 @@
 <docs-Endpoint>
 
-### %endpoint_title%
+%endpoint_header_level% %endpoint_title%
 
 <docs-ApiUrl type="%endpoint_method%" endpoint="%endpoint_url%" />
 
@@ -13,10 +13,11 @@
 
 <docs-EndpointExample>
 
-#### Example response
+%endpoint_sub_header_level% Example response
 
 ```json
 %response_example%
 ```
+
 </docs-EndpointExample>
 </docs-Endpoint>

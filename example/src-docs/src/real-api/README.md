@@ -1,14 +1,14 @@
 ---
-sidebar: ['./README.md']
+sidebar: [".\/README.md"]
 sidebarDepth: 2
 ---
+
 # Real API Example Resources
 
 | Resource | Endpoint | Description |
 |----------|----------|-------------|
 | User | [Get Users](.//README.md#get-users) | Gets a list of all users. |
 | User | [Update user](.//README.md#update-user) | Updates the user’s information. |
-
 
 <docs-Endpoint>
 
@@ -24,8 +24,6 @@ sidebarDepth: 2
 
 Gets a list of all users.
 
-
-
 #### Response Body
 
 | Field | Type | Description |
@@ -40,8 +38,6 @@ Gets a list of all users.
 | scopes | String[] | No description |
 | created_at | Datetime | No description |
 
-
-
 <docs-EndpointExample>
 
 #### Example response
@@ -49,8 +45,10 @@ Gets a list of all users.
 ```json
 {}
 ```
+
 </docs-EndpointExample>
-</docs-Endpoint><docs-Endpoint>
+</docs-Endpoint>
+<docs-Endpoint>
 
 ### Update user
 
@@ -58,15 +56,11 @@ Gets a list of all users.
 
 Updates the user’s information.
 
-
-
 #### Response Body
 
 | Field | Type | Description |
 |-------|------|-------------|
 | data | User | No description |
-
-
 
 <docs-EndpointExample>
 
@@ -75,5 +69,6 @@ Updates the user’s information.
 ```json
 {}
 ```
+
 </docs-EndpointExample>
 </docs-Endpoint>

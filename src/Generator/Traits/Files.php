@@ -10,6 +10,10 @@ trait Files
 			mkdir($dir, recursive: true);
 		}
 
+		do {
+			$html = rtrim(preg_replace("/\n\n\n/i", "\n\n", $html), "\n");
+		} while ( preg_match("/\n\n\n/i", $html) );
+
 		file_put_contents($filename, $html);
 	}
 

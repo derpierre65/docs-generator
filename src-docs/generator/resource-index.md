@@ -1,8 +1,9 @@
+%site_config%
 %header%
 
 <docs-Endpoint>
 
-## %resource_name%
+%resource_header_level% %resource_name%
 
 </docs-Endpoint>
 
