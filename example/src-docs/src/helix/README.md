@@ -25,6 +25,12 @@ sidebarDepth: 2
 
 Get list of Users @index
 
+#### Request Query Parameters
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| my_query_parameter | Date | No | Example Description |
+
 #### Response Body
 
 | Field | Type | Description |
@@ -63,7 +69,12 @@ Get list of Users with social connections @index2
 
 | Field | Type | Description |
 |-------|------|-------------|
-| data | Test[] | No description |
+| data | Array[] | No description |
+| &nbsp;&nbsp;&nbsp;id | Integer | No description |
+| &nbsp;&nbsp;&nbsp;username | String | No description |
+| &nbsp;&nbsp;&nbsp;email | String | No description |
+| &nbsp;&nbsp;&nbsp;overlay_token | String | No description |
+| &nbsp;&nbsp;&nbsp;created_at | Datetime | No description |
 
 <docs-EndpointExample>
 

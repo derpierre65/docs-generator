@@ -20,16 +20,16 @@ export default {
 	},
 	computed: {
 		badgeColor() {
-			if (this.type === 'get') {
+			if (this.type === 'GET') {
 				return 'notice';
 			}
-			else if (this.type === 'post') {
+			else if (this.type === 'POST') {
 				return 'tip';
 			}
-			else if (this.type === 'patch') {
+			else if (this.type === 'PATCH') {
 				return 'warning';
 			}
-			else if (this.type === 'delete') {
+			else if (this.type === 'DELETE') {
 				return 'danger';
 			}
 		},

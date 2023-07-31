@@ -3,18 +3,20 @@
 namespace Derpierre65\DocsGenerator;
 
 use Derpierre65\DocsGenerator\Attributes\ApiVersion;
+use Derpierre65\DocsGenerator\Attributes\BodyParameter;
 use Derpierre65\DocsGenerator\Attributes\Endpoint;
 use Derpierre65\DocsGenerator\Attributes\EndpointResource;
 use Derpierre65\DocsGenerator\Attributes\Property;
+use Derpierre65\DocsGenerator\Attributes\QueryParameter;
 use Derpierre65\DocsGenerator\Attributes\RequireAnyScope;
 use Derpierre65\DocsGenerator\Attributes\RequireAnyTokenType;
+use Derpierre65\DocsGenerator\Attributes\RequireScope;
 use Derpierre65\DocsGenerator\Attributes\Response;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\Attributes\Summary;
 use Derpierre65\DocsGenerator\Generator\MarkdownGenerator;
 use Derpierre65\DocsGenerator\Generator\Plugin\PluginManager;
 use Derpierre65\DocsGenerator\Generator\Traits\Helpers;
-use Derpierre65\DocsGenerator\Helpers\RequireScope;
 use ReflectionClass;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -145,6 +147,8 @@ class DocsGenerator
 					$reflectionProperty->getAttributes(RequireAnyScope::class),
 				), true);
 				$properties = $this->fetchAttributes($reflectionProperty->getAttributes(Property::class), true);
+				$queryParameters = $this->fetchAttributes($reflectionProperty->getAttributes(QueryParameter::class), true);
+				$bodyParameters = $this->fetchAttributes($reflectionProperty->getAttributes(BodyParameter::class), true);
 				$endpointResource = $this->fetchAttributes($reflectionProperty->getAttributes(EndpointResource::class));
 				$responses = $this->fetchAttributes($reflectionProperty->getAttributes(Response::class));
 
@@ -153,24 +157,29 @@ class DocsGenerator
 					$endpointInstance = $endpoint->newInstance();
 
 					// TODO better merge, allow multiple schemes as default response
-					$response = $responses[$endpointInstance->operationId] ?? $responses['_'] ?? null;
+					$operationId = $endpointInstance->operationId;
+					$response = $responses[$operationId] ?? $responses['_'] ?? null;
 					if ( $response && $response->properties instanceof Schema ) {
-						$endpointInstance->schema = $this->schemes[$response->properties->name];
+						$schema = $response->properties;
+						$globalSchema = $this->schemes[$schema->name];
+						$schema->properties = $globalSchema->properties;
+						$endpointInstance->schema = $schema;
 					}
 
 					// TODO maybe need to merge _ operation scopes/properties?
 					// TODO maybe make operationId possible to an array?
 					$endpointInstance
-						->addScopes($scopes[$endpointInstance->operationId] ?? $scopes['_'] ?? [])
-						->setSummary($summaries[$endpointInstance->operationId] ?? $summaries['_'] ?? null)
-						->setResource($endpointResource[$endpointInstance->operationId] ?? $endpointResource['_'] ?? $classEndpointResource['_'] ?? null);
+						->addScopes($scopes[$operationId] ?? $scopes['_'] ?? [])
+						->setQueryParameters($queryParameters[$operationId] ?? $queryParameters['_'] ?? [])
+						->setBodyParameters($bodyParameters[$operationId] ?? $bodyParameters['_'] ?? [])
+						->setSummary($summaries[$operationId] ?? $summaries['_'] ?? null)
+						->setResource($endpointResource[$operationId] ?? $endpointResource['_'] ?? $classEndpointResource['_'] ?? null);
 
-
-					if ( !empty($propertyList = $properties[$endpointInstance->operationId] ?? $properties['_'] ?? []) ) {
+					if ( !empty($propertyList = $properties[$operationId] ?? $properties['_'] ?? []) ) {
 						$endpointInstance->setProperties($propertyList);
 					}
 
-					if ( $tokenType = $tokenTypes[$endpointInstance->operationId] ?? $tokenTypes['_'] ?? null ) {
+					if ( $tokenType = $tokenTypes[$operationId] ?? $tokenTypes['_'] ?? null ) {
 						$endpointInstance->setTokenType($tokenType);
 					}
 
@@ -186,7 +195,7 @@ class DocsGenerator
 				continue;
 			}
 
-			$endpointIdentifier = json_encode($endpoint);
+			$endpointIdentifier = implode('-', [$endpoint->version, $endpoint->method->value, $endpoint->path]);
 			if ( !$endpoint->getResource() ) {
 				$this->log('error', sprintf('Endpoint %s has no resource', $endpointIdentifier));
 				continue;

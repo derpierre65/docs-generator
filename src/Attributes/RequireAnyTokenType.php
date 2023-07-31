@@ -3,7 +3,7 @@
 namespace Derpierre65\DocsGenerator\Attributes;
 
 use Attribute;
-use Derpierre65\DocsGenerator\Helpers\TokenTypeInterface;
+use Derpierre65\DocsGenerator\Attributes\Interfaces\TokenTypeInterface;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class RequireAnyTokenType implements TokenTypeInterface

@@ -1,8 +1,9 @@
 <?php
 
-namespace Derpierre65\DocsGenerator\Helpers;
+namespace Derpierre65\DocsGenerator\Attributes;
 
 use Attribute;
+use Derpierre65\DocsGenerator\Attributes\Interfaces\ScopeInterface;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class RequireScope implements ScopeInterface

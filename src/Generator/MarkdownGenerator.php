@@ -3,8 +3,10 @@
 namespace Derpierre65\DocsGenerator\Generator;
 
 use Derpierre65\DocsGenerator\Attributes\ApiVersion;
+use Derpierre65\DocsGenerator\Attributes\BodyParameter;
 use Derpierre65\DocsGenerator\Attributes\Endpoint;
 use Derpierre65\DocsGenerator\Attributes\Property;
+use Derpierre65\DocsGenerator\Attributes\QueryParameter;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\DocsGenerator;
 use Derpierre65\DocsGenerator\Enums\Generator\TableType;
@@ -44,8 +46,16 @@ class MarkdownGenerator
 		$data = [
 			'endpointTemplate' => $this->getTemplate('endpoint'),
 			'indexTemplate' => $this->getTemplate('resource-index'),
+
+			// table templates
 			'responseEntryTemplate' => $this->getTemplate('endpoint-response-entry'),
 			'responseIndexTemplate' => $this->getTemplate('endpoint-response-index'),
+			'bodyEntryTemplate' => $this->getTemplate('endpoint-body-entry'),
+			'bodyIndexTemplate' => $this->getTemplate('endpoint-body-index'),
+			'queryEntryTemplate' => $this->getTemplate('endpoint-query-entry'),
+			'queryIndexTemplate' => $this->getTemplate('endpoint-query-index'),
+
+			// header level
 			'endpointHeaderLevel' => str_repeat('#', $this->config['options']['generate_separate_resource_pages'] ? 2 : 3),
 			'endpointSubHeaderLevel' => str_repeat('#', $this->config['options']['generate_separate_resource_pages'] ? 3 : 4),
 			'resourceHeaderLevel' => str_repeat('#', $this->config['options']['generate_separate_resource_pages'] ? 1 : 2),
@@ -69,18 +79,32 @@ class MarkdownGenerator
 				'endpoint_method' => $endpoint->method->value,
 				'endpoint_url' => $endpoint->getPath(),
 				'endpoint_authorization' => '', // TODO oauth authorization information
-				'query_parameters' => '', // TODO
-				'body_parameters' => '', // TODO
+				'query_parameters' => $this->getTable(
+					TableType::QUERY,
+					$data['queryIndexTemplate'],
+					$data['queryEntryTemplate'],
+					$endpoint->getQueryParameters(),
+					0,
+					$this->config['options']['resolve_schema_in_query'] ?? false
+				),
+				'body_parameters' => $this->getTable(
+					TableType::BODY,
+					$data['bodyIndexTemplate'],
+					$data['bodyEntryTemplate'],
+					$endpoint->getBodyParameters(),
+					0,
+					$this->config['options']['resolve_schema_in_body'] ?? false
+				),
 				'response_body' => $this->getTable(
 					TableType::RESPONSE,
 					$data['responseIndexTemplate'],
 					$data['responseEntryTemplate'],
 					$endpoint->getProperties(),
 					0,
-					$this->config['options']['resolve_schema_in_response']
+					$this->config['options']['resolve_schema_in_response'] ?? false
 				),
 				'response_codes' => '', // TODO
-				'response_example' => json_encode($this->buildResponseExample($endpoint->getProperties()), JSON_PRETTY_PRINT), // TODO
+				'response_example' => json_encode($this->buildResponseExample($endpoint->getProperties()), JSON_PRETTY_PRINT),
 			]), [
 				'endpoint_header_level' => $data['endpointHeaderLevel'],
 				'endpoint_sub_header_level' => $data['endpointSubHeaderLevel'],
@@ -153,7 +177,7 @@ class MarkdownGenerator
 
 				if ( $shouldResolveSchema ) {
 					$properties = $this->getSchemaProperties($property->example);
-					$html .= $this->getTable($type, '', $entry, $properties, $level + 1);
+					$html .= $this->getTable($type, '', $entry, $properties, $level + 1, $shouldResolveSchema);
 				}
 			}
 			elseif ( is_array($property->example) ) {
@@ -184,13 +208,18 @@ class MarkdownGenerator
 
 	protected function renderColumnProperty(TableType $type, string $template, Property $property, int $level = 0, bool $useSchemaName = false) : string
 	{
+		$required = false;
+		if ( $property instanceof QueryParameter || $property instanceof BodyParameter) {
+			$required = $property->required;
+		}
+
 		return $this->replaceTemplateVariables($template, [
 			// using &nbsp; to force spaces
 			'name' => str_repeat('&nbsp;&nbsp;&nbsp;', $level).$property->fieldName,
 			'type' => ucfirst($useSchemaName && $property->example instanceof Schema ? $property->example->name : $property->type->value).($property->isArray ? '[]' : ''),
 			'description' => $property->description ? : $this->config['defaults']['property_'.$type->value.'_description'],
 			'example' => is_scalar($property->example) ? $property->example : '',
-			'required' => false,
+			'required' => $required ? 'Yes' : 'No',
 		]);
 	}
 
@@ -233,10 +262,10 @@ class MarkdownGenerator
 		$newSchema = $this->generator->getSchemes()[$schema->name];
 
 		// merge exclude array from schema and global schema
-		$ignoreFields = array_unique(array_merge($schema->exclude, $newSchema->exclude));
+		$excludeFields = array_unique(array_merge($schema->exclude, $newSchema->exclude));
 
 		// filter out any unwanted field
-		return array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $ignoreFields));
+		return array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $excludeFields));
 	}
 
 	protected function buildResponseExample(array $response) : array

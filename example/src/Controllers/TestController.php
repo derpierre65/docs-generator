@@ -2,21 +2,23 @@
 
 namespace Derpierre65\DocsGenerator\Example\Controllers;
 
+use Derpierre65\DocsGenerator\Attributes\BodyParameter;
 use Derpierre65\DocsGenerator\Attributes\Endpoint;
 use Derpierre65\DocsGenerator\Attributes\EndpointResource;
 use Derpierre65\DocsGenerator\Attributes\Property;
+use Derpierre65\DocsGenerator\Attributes\QueryParameter;
 use Derpierre65\DocsGenerator\Attributes\RequireAnyScope;
 use Derpierre65\DocsGenerator\Attributes\RequireAnyTokenType;
+use Derpierre65\DocsGenerator\Attributes\RequireScope;
 use Derpierre65\DocsGenerator\Attributes\Response;
 use Derpierre65\DocsGenerator\Attributes\ResponseCode;
 use Derpierre65\DocsGenerator\Attributes\Schema;
 use Derpierre65\DocsGenerator\Attributes\Summary;
-use Derpierre65\DocsGenerator\Example\Enums\Scope;
-use Derpierre65\DocsGenerator\Example\Enums\ScopeEnum;
 use Derpierre65\DocsGenerator\Enums\EndpointMethod;
 use Derpierre65\DocsGenerator\Enums\PropertyType;
 use Derpierre65\DocsGenerator\Enums\TokenType;
-use Derpierre65\DocsGenerator\Helpers\RequireScope;
+use Derpierre65\DocsGenerator\Example\Enums\Scope;
+use Derpierre65\DocsGenerator\Example\Enums\ScopeEnum;
 
 #[EndpointResource('User')]
 class TestController extends Controller
@@ -28,6 +30,7 @@ class TestController extends Controller
 	#[RequireScope(ScopeEnum::MY_TEST_SCOPE)]
 	#[RequireScope(Scope::MY_SECOND_TEST_SCOPE)]
 	#[Response(new Schema('Test'))]
+	#[QueryParameter('my_query_parameter', PropertyType::DATE, description: 'Example Description')]
 	public function index(){}
 
 	#[Summary('Get Users', 'Get list of Users @index2')]
@@ -92,6 +95,10 @@ class TestController extends Controller
 	{
 	}
 
+	#[Endpoint(EndpointMethod::PATCH, 'kraken', 'users')]
+	#[Summary('Patch user', 'Update an user object.')]
+	#[BodyParameter('email', PropertyType::STRING, 'hello@derpierre65.dev', description: 'Example Description', required: true)]
+	#[BodyParameter('username', PropertyType::STRING, 'derpierre65', required: false)]
 	public function update()
 	{
 	}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Derpierre65\DocsGenerator\Helpers;
+namespace Derpierre65\DocsGenerator\Attributes\Interfaces;
 
 interface ScopeInterface
 {
