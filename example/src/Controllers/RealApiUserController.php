@@ -24,7 +24,7 @@ class RealApiUserController
 
 	#[Endpoint(EndpointMethod::PATCH, 'real-api', 'users/{user}')]
 	#[Summary('Update user', 'Updates the user’s information.')]
-	#[Response(new Schema('User', withoutFields: ['avatar']))]
+	#[Response(new Schema('User', exclude: ['avatar']))]
 	public function store() {
 
 	}

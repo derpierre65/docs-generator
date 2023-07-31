@@ -226,13 +226,14 @@ class MarkdownGenerator
 		return $html;
 	}
 
-	protected function getSchemaProperties(Schema $schema)
+	protected function getSchemaProperties(Schema $schema) : array
 	{
 		// get the global schema
+		/** @var Schema $newSchema */
 		$newSchema = $this->generator->getSchemes()[$schema->name];
 
-		// merge schema and global schema withoutFields
-		$ignoreFields = array_unique(array_merge($schema->withoutFields, $newSchema->withoutFields));
+		// merge exclude array from schema and global schema
+		$ignoreFields = array_unique(array_merge($schema->exclude, $newSchema->exclude));
 
 		// filter out any unwanted field
 		return array_filter($newSchema->properties, fn(Property $value) => !in_array($value->fieldName, $ignoreFields));

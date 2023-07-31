@@ -7,7 +7,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class Schema
 {
-	public function __construct(public readonly string $name, public array $properties = [], public array $withoutFields = [])
+	public function __construct(public readonly string $name, public array $properties = [], public array $exclude = [])
 	{
 	}
 
