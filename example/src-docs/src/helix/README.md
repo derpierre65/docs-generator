@@ -11,13 +11,7 @@ sidebarDepth: 2
 | User | [Get Users](.//README.md#get-users-1) | Get list of Users with social connections @index2 |
 | User | [Get Users](.//README.md#get-users-2) | Get list of Users |
 
-<docs-Endpoint>
-<template #header>
-
 ## User
-
-</template>
-</docs-Endpoint>
 
 <docs-Endpoint>
 <template #header>

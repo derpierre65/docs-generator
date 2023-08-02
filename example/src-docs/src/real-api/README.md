@@ -12,13 +12,7 @@ sidebarDepth: 2
 | User | [Get user](.//README.md#get-user) | Get user’s information. |
 | User | [Acting as User](.//README.md#acting-as-user) | Start acting as an other user. |
 
-<docs-Endpoint>
-<template #header>
-
 ## User
-
-</template>
-</docs-Endpoint>
 
 <docs-Endpoint>
 <template #header>

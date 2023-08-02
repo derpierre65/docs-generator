@@ -13,13 +13,7 @@ sidebarDepth: 2
 | My Test | [Get Test](.//README.md#get-test) | Hihi not a user resource in my user controller |
 | User | [Patch user](.//README.md#patch-user) | Update an user object. |
 
-<docs-Endpoint>
-<template #header>
-
 ## User
-
-</template>
-</docs-Endpoint>
 
 <docs-Endpoint>
 <template #header>
@@ -184,13 +178,7 @@ Update an user object.
 </template>
 </docs-Endpoint>
 
-<docs-Endpoint>
-<template #header>
-
 ## My Test
-
-</template>
-</docs-Endpoint>
 
 <docs-Endpoint>
 <template #header>
