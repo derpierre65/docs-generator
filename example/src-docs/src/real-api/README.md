@@ -13,14 +13,19 @@ sidebarDepth: 2
 | User | [Acting as User](.//README.md#acting-as-user) | Start acting as an other user. |
 
 <docs-Endpoint>
+<template #header>
 
 ## User
 
+</template>
 </docs-Endpoint>
 
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/v1/users" />
 
@@ -49,6 +54,7 @@ Gets a list of all users.
 | &nbsp;&nbsp;&nbsp;scopes | String[] | No description |
 | &nbsp;&nbsp;&nbsp;created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -85,10 +91,14 @@ Gets a list of all users.
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Update user
+
+</template>
 
 <docs-ApiUrl type="PATCH" endpoint="https://api.example.org/v1/users/{user}" />
 
@@ -115,6 +125,7 @@ Updates the user’s information.
 | scopes | String[] | No description |
 | created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -146,10 +157,14 @@ Updates the user’s information.
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Get user
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/v1/users/{user}" />
 
@@ -177,6 +192,7 @@ Get user’s information.
 | scopes | String[] | No description |
 | created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -209,10 +225,14 @@ Get user’s information.
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Acting as User
+
+</template>
 
 <docs-ApiUrl type="POST" endpoint="https://api.example.org/v1/user/acting-as/" />
 
@@ -237,6 +257,7 @@ Start acting as an other user.
 | scopes | String[] | No description |
 | created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -257,4 +278,5 @@ Start acting as an other user.
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>

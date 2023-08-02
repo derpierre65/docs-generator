@@ -7,10 +7,5 @@
 <script>
 export default {
 	name: 'EndpointExample',
-	mounted() {
-		if (this.$parent.$parent.$options.name === 'Endpoint') {
-			this.$parent.$parent.renderLayout();
-		}
-	},
 };
 </script>

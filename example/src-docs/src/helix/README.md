@@ -12,14 +12,19 @@ sidebarDepth: 2
 | User | [Get Users](.//README.md#get-users-2) | Get list of Users |
 
 <docs-Endpoint>
+<template #header>
 
 ## User
 
+</template>
 </docs-Endpoint>
 
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/helix/users" />
 
@@ -41,6 +46,7 @@ Get list of Users @index
 | overlay_token | String | No description |
 | created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -56,10 +62,14 @@ Get list of Users @index
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/helix/users" />
 
@@ -76,6 +86,7 @@ Get list of Users with social connections @index2
 | &nbsp;&nbsp;&nbsp;overlay_token | String | No description |
 | &nbsp;&nbsp;&nbsp;created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -95,15 +106,20 @@ Get list of Users with social connections @index2
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/helix/users" />
 
 Get list of Users
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -113,4 +129,5 @@ Get list of Users
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>

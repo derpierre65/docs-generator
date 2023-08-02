@@ -1,6 +1,9 @@
 <docs-Endpoint>
+<template #header>
 
 %endpoint_header_level% %endpoint_title%
+
+</template>
 
 <docs-ApiUrl type="%endpoint_method%" endpoint="%endpoint_url%" />
 
@@ -11,6 +14,7 @@
 %response_body%
 %response_codes%
 
+<template #example>
 <docs-EndpointExample>
 
 %endpoint_sub_header_level% Example response
@@ -20,4 +24,5 @@
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>

@@ -14,14 +14,19 @@ sidebarDepth: 2
 | User | [Patch user](.//README.md#patch-user) | Update an user object. |
 
 <docs-Endpoint>
+<template #header>
 
 ## User
 
+</template>
 </docs-Endpoint>
 
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/kraken/users" />
 
@@ -43,6 +48,7 @@ Get list of Users @index
 | overlay_token | String | No description |
 | created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -58,10 +64,14 @@ Get list of Users @index
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/kraken/users" />
 
@@ -78,6 +88,7 @@ Get list of Users @index2
 | &nbsp;&nbsp;&nbsp;overlay_token | String | No description |
 | &nbsp;&nbsp;&nbsp;created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -97,10 +108,14 @@ Get list of Users @index2
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Get Users
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/kraken/users" />
 
@@ -116,6 +131,7 @@ Get list of Users
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d | Object | No description |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enabled | Boolean | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -135,10 +151,14 @@ Get list of Users
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 <docs-Endpoint>
+<template #header>
 
 ### Patch user
+
+</template>
 
 <docs-ApiUrl type="PATCH" endpoint="https://api.example.org/kraken/users" />
 
@@ -151,6 +171,7 @@ Update an user object.
 | email | String | Yes | Example Description |
 | username | String | No | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -160,17 +181,23 @@ Update an user object.
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
 
 <docs-Endpoint>
+<template #header>
 
 ## My Test
 
+</template>
 </docs-Endpoint>
 
 <docs-Endpoint>
+<template #header>
 
 ### Get Test
+
+</template>
 
 <docs-ApiUrl type="GET" endpoint="https://api.example.org/kraken/not-an-user" />
 
@@ -198,6 +225,7 @@ Hihi not a user resource in my user controller
 | &nbsp;&nbsp;&nbsp;overlay_token | String | No description |
 | &nbsp;&nbsp;&nbsp;created_at | Datetime | No description |
 
+<template #example>
 <docs-EndpointExample>
 
 #### Example response
@@ -230,4 +258,5 @@ Hihi not a user resource in my user controller
 ```
 
 </docs-EndpointExample>
+</template>
 </docs-Endpoint>
